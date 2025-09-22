@@ -18,7 +18,7 @@ nav:
   - Home: index.md                 # put your intro/abstract here
   - Project Overview: project_overview_mkdocs.md
   - Technical Design: technical_design_mkdocs.md
-  - Model Log: model_development_log_mkdocs.md
+  - Modeling Journey: model_development_log_mkdocs.md
   - Results: results_mkdocs.md
   - Videos: videos.md              # new page we’ll add below
 

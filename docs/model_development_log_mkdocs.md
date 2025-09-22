@@ -1,7 +1,7 @@
-# 4. Model Development Log
+# 4. Modeling Journey
 
 In this section, we summarize of the motivations, implementations and problems for each of the 11 versioned 
-models. Conceptually, we can treat each model as a jigsaw puzzle to slot into the inference pipeline, as models 
+models. We can treat each model as a jigsaw puzzle to slot into the inference pipeline, as models 
 for the same stage share the same input and output signatures.
 
 ---
@@ -37,46 +37,46 @@ for the same stage share the same input and output signatures.
 
 ### Stage-1 v1
 
-**Model summary**
+**Model summary: GAP -> MLP regression head**
 
 This is the first model I designed for the project. Having finished a much simpler regression project before with an 
 MLP head, I thought feeding a vector into another MLP was a sound strategy. For this approach to work, we need a 
 feature extractor, which in this case is the last stage of the EfficientNet B3 architecture which applies GAP to 
 produce a tensor of shape [1536, 1, 1].
 
-1. We pass the downsampled current frame into the feature extractor and squeeze the last two dimensions to get a vector 
+1. We pass the downsampled current frame into the feature extractor to get a vector 
 of dimension 1536. 
 2. We do the same to the downsampled past frames and 
-apply a simple attention mechanism to get another vector of dimension 1536. 
-3. Lastly, we use a sequence of 1D 
-convolutions on the 30 past triplets to produce a vector of dimension 64. 
+apply an attention mechanism to get another vector of dimension 1536. 
+3. We use a sequence of 1D 
+convolutions on the 30 past triplets to produce a "physics" vector of dimension 64. 
 4. Fused together, we have a vector of dimension 
-3136, which we pass to an MLP of 4 layers to produce (x_rough, y_rough).
+3136, which we pass to an MLP of depth 4 to produce (x_rough, y_rough).
 
 **Why the model failed**
 
-In one word: GAP. We use Figure 6 to illustrate why GAP is so detrimental to high-precision point estimation tasks.
+In one word: GAP. We use Figure 5 to illustrate why GAP is so detrimental to high-precision point estimation tasks.
 
 <figure markdown>
-  ![Figure 6: Effects of GAP](Figures/GAP.png){ width="80%" }
-  <figcaption>Figure 6: Effects of GAP</figcaption>
+  ![Figure 5: Effects of GAP](Figures/GAP.png){ width="80%" }
+  <figcaption>Figure 5: Effects of GAP</figcaption>
 </figure>
 
 Suppose we pass an image to a CNN. Before the final GAP operation, the image is typically represented as a feature map 
 of rank 3 (conceptually a cuboid where you need three indices to access any entry). 
 
 The width and height of the feature 
-map split the image into a grid, while the depth represents how many features you store for each square in the grid. 
-In the Figure 6, we split the image into a 6x6 grid, and store 3 features for each of the 36 squares in that grid. 
+map split the image into a grid, while the depth represents how many features you store for each cell. 
+In Figure 5, we split the image into a 6x6 grid, and store 3 features for each of the 36 cells. 
 
 What we have in a feature map of rank 3 is rich spatial information; the depth tells you what kind of feature exists while 
 the width and height tell you where you can find that feature.
 
-GAP averages the 36 features in each sheet and collapses the feature map rich with spatial information into one which 
+GAP averages the 36 features in each sheet and collapses the rank-3 feature map rich with spatial information into one which 
 effectively has rank 1 (a vector). 
 
 The new feature map only tells you roughly what exists in the image, with no information 
-regarding where. Clearly, feeding any MLP with this new feature map for point-estimation is a bad idea as the MLP 
+regarding where. Clearly, feeding any MLP with this new feature map for point-estimation won't work as the MLP 
 cannot reconstruct spatial information from an average, leading to the severe overfitting and slow learning rate we 
 observed.
 
@@ -84,7 +84,7 @@ observed.
 
 ### Stage-1 v4
 
-**Model summary**
+**Model summary: BiFPN -> heatmap**
 
 Having seen the effectiveness of FPN/BiFPN → heatmap approaches in the later stage-2 versions, I kept the design of 
 stage-1 version 4 extremely simple. 
@@ -114,16 +114,16 @@ nuance in exploring how the validation losses dropped in version 5 with a one-li
 **How did the validation losses drop?**
 
 For a whole week, the validation losses across four different stage-2 versions could not drop below 0.10 while the 
-training losses could reliably hit 0.012. This evidently led to much frustration, from which I conducted a sequence of 
+training losses reliably hit 0.012. This led to much frustration, from which I conducted
 debugs on the dataset, dataloader, models and even training procedures; to no avail.
 
 As last resort, I ran a series 
 of tests to see the impacts of different combinations of data augmentation techniques on the losses incurred. 
-Figure 7 shows the raw results obtained.
+Figure 6 shows the raw results obtained.
 
 <figure markdown>
-  ![Figure 7: Impact of augmentation techniques on validation losses](Figures/raw_test_data.jpeg){ width="80%" }
-  <figcaption>Figure 7: Impact of augmentation techniques on validation losses</figcaption>
+  ![Figure 6: Impact of augmentation techniques on validation losses](Figures/raw_test_data.jpeg){ width="80%" }
+  <figcaption>Figure 6: Impact of augmentation techniques on validation losses</figcaption>
 </figure>
 
 We collate this data into the following table:
@@ -137,7 +137,7 @@ We collate this data into the following table:
 | 5        | Validation | False                 | 0.01           | False                   | 0.0108       |
 | 6        | Validation | True                  | 0.00           | True                    | 0.2017       |
 
-We can clearly see the average losses clustering around two values; 0.01 and 0.20. We also see that there is a perfect 
+We see the average losses cluster around 0.01 and 0.20. We also see that there is a perfect 
 correlation between applying Gaussian noise and incurring an abnormally high validation loss. Before stage-2 version 5, 
 we would apply Gaussian noise to a crop or frame the following way:
 
@@ -176,6 +176,6 @@ conditions so that it is not "surprised" by any.
 noise_std = np.random.uniform(low=0, high=noise_std) # from version 5 onwards
 ```
 
-Within the first epoch of training, we see validation losses drop to 0.03; a bottleneck solved by one line.
+Within the first epoch of training, the validation losses dropped to 0.04; a bottleneck solved by one line.
 
 <br><br>

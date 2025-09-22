@@ -14,7 +14,7 @@
 - **Compiled a custom-labeled dataset of 5800 frames**, where final-stage predictions deviated by only 3-4 pixels on 
   average from the manually labeled shuttle head positions; an impressive level of precision given the object’s small 
   size and extreme speed.
-- **Built a two-stage computer vision system that competently solves the shuttle localization task** proposed in the 
+- **Built a two-stage (explained in [Technical Design](technical_design_mkdocs.md#problem-1-high-resolution-requirements-under-real-time-constraints)) computer vision system that competently solves the shuttle localization task** proposed in the 
   problem statement. The system achieves real-time inference at 86 FPS, comfortably surpassing the 60 FPS requirement 
   for live video processing.
 - **Delivered an inference engine running on consumer-grade GPUs** using `.engine` model exports. The optimized 

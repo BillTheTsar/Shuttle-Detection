@@ -45,7 +45,7 @@ Below we list the main limitations of the inference pipeline with what I believe
 
 ---
 
-**Limitation 4:** the inference pipeline fails entirely on low-quality footage. Common symptoms include frequent dropped frames (surprisingly common from equipment that claims to be 60 FPS but can’t actually achieve it), poor interpolation methods that cause the shuttle head to vanish intermittently, and constant refocusing that disrupts visual consistency. 
+**Limitation 4:** the inference pipeline fails entirely on low-quality footage. Indicators of poor footage include frequent dropped frames (surprisingly common from equipment that claims to be 60 FPS but can’t actually achieve it), poor interpolation methods that cause the shuttle head to vanish intermittently, and constant refocusing that disrupts visual consistency. 
 
 **Solution 4:** none. It is unrealistic to expect an inference pipeline with CNN backbones to adapt to impossible image data. Instead, use recording equipment that reliably produces high-quality footage.
 
