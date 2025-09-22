@@ -665,7 +665,7 @@ convolutions on the 30 past triplets to produce a vector of dimension 64.
 
 **Why the model failed**
 
-In one word: GAP. We use Figure 6 to illustrate why GAP is so detrimental to high-precision point estimation tasks. 
+In one word: GAP. We use Figure 6 to illustrate why GAP is so detrimental to high-precision point estimation tasks.
 
 <figure style="text-align: center;">
   <img src="Figures/GAP.png" alt="GAP" style="width:80%; height:auto;">
@@ -811,7 +811,7 @@ inference.
 ## Qualitative results
 We show 5 snippets of unseen footage labeled by our inference pipeline:
 
-[![Watch the video](Figures/something.png)](https://www.youtube.com/watch?v=XXXXXXXX)
+[![Watch the video](https://raw.githubusercontent.com/BillTheTsar/Shuttle-Detection/main/labeled_videos/thumbnails/1.jpg)](https://github.com/BillTheTsar/Shuttle-Detection/blob/main/labeled_videos/1.mp4?raw=true)
 
 [![Watch the video](Figures/something.png)](https://www.youtube.com/watch?v=XXXXXXXX)
 
