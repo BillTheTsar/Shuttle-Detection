@@ -1,0 +1,40 @@
+site_name: Shuttle Detection
+site_url: https://billthetsar.github.io/Shuttle-Detection/
+repo_url: https://github.com/BillTheTsar/Shuttle-Detection
+theme:
+  name: material
+  icon:
+    logo: material/hexagon
+  features:
+    - navigation.instant
+    - navigation.sections
+    - toc.integrate
+    - content.code.annotate
+extra:
+  homepage: index_mkdocs.md
+
+# Pretty URLs are on by default; keep them
+use_directory_urls: true
+
+nav:
+  - Home: index_mkdocs.md                 # put your intro/abstract here
+  - Project Overview: project_overview_mkdocs.md
+  - Technical Design: technical_design_mkdocs.md
+  - Model Log: model_development_log_mkdocs.md
+  - Results: results_mkdocs.md
+  - Videos: videos.md              # new page we’ll add below
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - attr_list
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+
+extra_javascript:
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js

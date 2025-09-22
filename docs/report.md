@@ -622,8 +622,6 @@ for the same stage share the same input and output signatures.
 
 </details>
 
----
-
 ## Stage-2 version table (optional reading)
 
 <details>

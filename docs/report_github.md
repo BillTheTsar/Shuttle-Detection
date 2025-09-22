@@ -627,8 +627,6 @@ for the same stage share the same input and output signatures.
 
 </details>
 
----
-
 ## Stage-2 version table (optional reading)
 
 <details>
@@ -816,9 +814,9 @@ inference.
 ---
 
 ## Qualitative results
-We show 5 snippets of unseen footage labeled by our system. Click below to play.
+We show 5 snippets of unseen footage labeled by our system. Click below to be directed to the gallery.
 
-[![Watch the video](https://raw.githubusercontent.com/BillTheTsar/Shuttle-Detection/main/labeled_videos/thumbnails/1.jpg)](https://billthetsar.github.io/Shuttle-Detection/)
+[![Watch the video](labeled_videos/thumbnails/1.jpg)](videos.md)
 
 ---
 
