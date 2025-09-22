@@ -293,7 +293,7 @@
   
   
   <span class="md-ellipsis">
-    Model Log
+    Modeling Journey
     
   </span>
   
@@ -483,7 +483,7 @@ inference.</p>
 <p><strong>Limitation 3:</strong> the inference pipeline is highly sensitive to video scale. One can infer from the snippets of unseen footage what scale range the models perform reliably in.</p>
 <p><strong>Solution to limitation 3:</strong> as with limitation 1, the models were trained on footage at more or less the same video scale. While it might seem reasonable to include samples at multiple scales to improve generalization, I would not recommend incorporating smaller scales; at such resolutions, shuttle heads become featureless blobs, making learning and detection meaningless. Instead, it is recommended to record at a similar scale (and thus distance from the court) to that shown in the snippets.</p>
 <hr />
-<p><strong>Limitation 4:</strong> the inference pipeline fails entirely on low-quality footage. Common symptoms include frequent dropped frames (surprisingly common from equipment that claims to be 60 FPS but can’t actually achieve it), poor interpolation methods that cause the shuttle head to vanish intermittently, and constant refocusing that disrupts visual consistency. </p>
+<p><strong>Limitation 4:</strong> the inference pipeline fails entirely on low-quality footage. Indicators of poor footage include frequent dropped frames (surprisingly common from equipment that claims to be 60 FPS but can’t actually achieve it), poor interpolation methods that cause the shuttle head to vanish intermittently, and constant refocusing that disrupts visual consistency. </p>
 <p><strong>Solution 4:</strong> none. It is unrealistic to expect an inference pipeline with CNN backbones to adapt to impossible image data. Instead, use recording equipment that reliably produces high-quality footage.</p>
 <hr />
 <h2 id="reflections">Reflections<a class="headerlink" href="#reflections" title="Permanent link">&para;</a></h2>

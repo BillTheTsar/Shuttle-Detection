@@ -326,18 +326,18 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#problem-1-high-resolution-requirements-under-real-time-constraints" class="md-nav__link">
+  <a href="#challenge-1-high-resolution-requirements-under-real-time-constraints" class="md-nav__link">
     <span class="md-ellipsis">
-      Problem 1: high-resolution requirements under real-time constraints
+      Challenge 1: high-resolution requirements under real-time constraints
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#problem-2-the-need-for-context" class="md-nav__link">
+  <a href="#challenge-2-the-need-for-context" class="md-nav__link">
     <span class="md-ellipsis">
-      Problem 2: the need for context
+      Challenge 2: the need for context
     </span>
   </a>
   
@@ -443,7 +443,7 @@
   
   
   <span class="md-ellipsis">
-    Model Log
+    Modeling Journey
     
   </span>
   
@@ -518,34 +518,32 @@
 
 <h1 id="3-technical-design">3. Technical Design<a class="headerlink" href="#3-technical-design" title="Permanent link">&para;</a></h1>
 <h2 id="pipeline-overview">Pipeline overview<a class="headerlink" href="#pipeline-overview" title="Permanent link">&para;</a></h2>
-<p>In spite of having 11 versioned models (4 for stage 1, 7 for stage 2) with different
-architectures, the general pipeline since the inception of this project has remained constant. </p>
 <p>Rather than presenting 
-the pipeline as a fixed sequence, I describe the underlying challenges it was designed to solve. The pipeline’s 
+the inference pipeline as a sequence, I describe the challenges it was designed to solve. The pipeline’s 
 structure will fall out naturally as a response to these problems.</p>
 <hr />
-<h3 id="problem-1-high-resolution-requirements-under-real-time-constraints">Problem 1: high-resolution requirements under real-time constraints<a class="headerlink" href="#problem-1-high-resolution-requirements-under-real-time-constraints" title="Permanent link">&para;</a></h3>
+<h3 id="challenge-1-high-resolution-requirements-under-real-time-constraints">Challenge 1: high-resolution requirements under real-time constraints<a class="headerlink" href="#challenge-1-high-resolution-requirements-under-real-time-constraints" title="Permanent link">&para;</a></h3>
 <p>Most popular CNNs like ResNet, AlexNet, YOLOv8 and EfficientNet are capped off at an input resolution of 600x600, 
-which is nowhere near the resolution we need (1920x1080). As we have stated, badminton shuttles typically occupy a 
-height and width 1/30 of the frame, and thus become a blurred blob with any significant downsampling.</p>
+which is far below the resolution we need (1920x1080). As we have stated, badminton shuttles occupy a 
+height and width 1/30 of the frame, and thus become a blob with any significant downsampling.</p>
 <p>On top of this, we want to achieve inference speeds above 60 FPS, and 
 since FLOPs scale quadratically with resolution, resolutions above 360x360 are not seriously considered. </p>
 <p>On the one hand, we need high resolution to pinpoint the shuttle head, but low resolution to meet runtime constraints.</p>
 <p><strong>Impact on pipeline:</strong></p>
-<p>This is only a problem if we insist on solving the problem statement with one CNN pass per frame. Thus, we must 
-look to a multi-stage pipeline. Here, we are lucky because while locating the precise position of a 
-shuttle head at low resolution is impossible (for someone with 10+ years of experience), finding the approximate region 
-of the shuttle is not. Conceptually, we could look for a white blob or infer from the players’ movements.</p>
-<p>Thus, we split the inference into two stages; stage 1 for locating the approximate region of the shuttle using frames 
+<p>This is a paradox if we insist on solving the problem statement with a single CNN; we must 
+split the task somehow. Here, we are lucky because while locating the precise position of a 
+shuttle head at low resolution is impossible (for someone with 10+ years of experience), finding its approximate region 
+is not. Conceptually, we could look for a white blob or infer from the players’ movements.</p>
+<p>Thus, we split inference into two stages; stage 1 for locating the approximate region of the shuttle using frames 
 downsampled to low resolution, and stage 2 for precisely locating the shuttle head once we zoom in around the rough 
-prediction (by zooming in, we mean taking a low-resolution but sharp crop around the stage 1 prediction). We thus have 
+prediction (zooming in means taking a low-resolution but sharp crop around the stage 1 prediction). We thus have 
 a course-to-fine point estimation pipeline.</p>
 <p>This coarse-to-fine pipeline not only satisfies our resolution-FPS requirements but also decouples training, with each 
-stage having its own loss functions, optimizers etc. It also allows us to intelligently combine models from the two 
-stages later to increase inference stability (discussed under Modes of inference).</p>
+stage having its own loss functions, optimizers etc. Furthermore, it allows us to intelligently combine models from the two 
+stages later to increase inference stability (discussed under <a href="#modes-of-inference">Modes of inference</a>).</p>
 <hr />
-<h3 id="problem-2-the-need-for-context">Problem 2: the need for context<a class="headerlink" href="#problem-2-the-need-for-context" title="Permanent link">&para;</a></h3>
-<p>While I was labeling shuttle heads, I would often find them too blurry to localize based on one frame alone. In those 
+<h3 id="challenge-2-the-need-for-context">Challenge 2: the need for context<a class="headerlink" href="#challenge-2-the-need-for-context" title="Permanent link">&para;</a></h3>
+<p>While I was labeling shuttle heads, I would often find them too blurry to localize with one frame alone. In those 
 cases, I would roll back a few frames, find one in which the shuttle was clearer, and infer from the “good” frame where 
 the shuttle head in the current frame should be. Since shuttle heads follow a smooth 
 trajectory outside of being hit and do not change orientation much between frames, we can accurately infer from 
@@ -562,39 +560,41 @@ while labeling. Figure 1 illustrates the inference pipeline.</p>
 </figure>
 <hr />
 <h2 id="dataset-overview">Dataset overview<a class="headerlink" href="#dataset-overview" title="Permanent link">&para;</a></h2>
-<p>To build a training set that reflects real-world gameplay, I collected footage from four 1920×1080, 60 FPS badminton 
-videos: three were Creative Commons–licensed from YouTube, and one was personally recorded. My mum and I manually 
-annotated 5,800 samples. After shuffling, 90% of samples were labeled as training, 5% were labeled validation and 
-testing each. The structure of each sample is given in Figure 2.</p>
+<p>My mum and I created the dataset with 5,800 samples. After shuffling, 90% of samples were labeled as training, 
+5% were labeled validation and testing each. The structure of each sample is given in Figure 2.</p>
 <figure>
 <p><img alt="Figure 2: Structure of each sample in the dataset" src="../Figures/dataset_sample.png" width="80%" />
   </p>
 <figcaption>Figure 2: Structure of each sample in the dataset</figcaption>
 </figure>
-<p>frame is the current frame, the other three are the 3 past frames, with frame-1 being the most recent. positions.csv 
-contains 30 past triplets, with (x_truth, y_truth, 1) if the shuttle head is present in its corresponding frame and 
-(0, 0, 0) otherwise. Lastly, target.csv records the ground truth triplet for the current frame and is used in all loss 
-functions. Figure 3 gives a conceptual overview of the process from raw mp4 to the samples.</p>
-<figure>
-<p><img alt="Figure 3: process from mp4 -&gt; samples" src="../Figures/video_to_sample_pipeline.png" width="80%" />
-  </p>
-<figcaption>Figure 3: process from mp4 -&gt; samples</figcaption>
-</figure>
+<ul>
+<li>frame is the current frame.</li>
+<li>frame-1 is the most recent past frame and so on for the other two.</li>
+<li>positions.csv 
+contains 30 past triplets: (x_truth, y_truth, 1) if the shuttle head is present in its corresponding frame and 
+(0, 0, 0) otherwise.</li>
+<li>target.csv records the ground truth triplet for the current frame.</li>
+</ul>
 <hr />
 <h3 id="data-augmentation">Data augmentation<a class="headerlink" href="#data-augmentation" title="Permanent link">&para;</a></h3>
-<p>To maximize robustness across lighting conditions, noise profiles, and camera angles, I implemented a selected set of 
-augmentation techniques, ensuring realism was preserved while still enabling generalization.</p>
+<p>To maximize robustness across lighting conditions, noise profiles, and camera angles, I selected the following set of 
+augmentation techniques.</p>
 <p><strong>1. Uniform color jitter across frames</strong></p>
 <p>Enhances the models' adaptability to various lighting conditions by changing brightness, contrast, saturation, 
-and hue uniform across the 4-frame context.</p>
+and hue uniform across the 4 frames.</p>
+<details class="note" open="open">
+<summary>Implementation</summary>
 <div class="highlight"><pre><span></span><code><span class="c1"># dataset.py</span>
 <span class="bp">self</span><span class="o">.</span><span class="n">color_jitter</span> <span class="o">=</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">ColorJitter</span><span class="p">(</span>
     <span class="n">brightness</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">contrast</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
     <span class="n">saturation</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="mf">0.05</span>
 <span class="p">)</span>
 </code></pre></div>
+</details>
 <p><strong>2. Independent Gaussian noise per frame</strong></p>
 <p>Prevents overfitting to low-level pixel patterns and encourages focus on higher-level motion and shapes.</p>
+<details class="note">
+<summary>Implementation</summary>
 <div class="highlight"><pre><span></span><code><span class="c1"># dataset.py</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">apply_noise</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">noise_std</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -610,8 +610,11 @@ and hue uniform across the 4-frame context.</p>
         <span class="n">noisy_frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img_tensor</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">noisy_frames</span>
 </code></pre></div>
+</details>
 <p><strong>3. Horizontal flipping with positional adjustment</strong></p>
 <p>Simulates mirrored camera angles with appropriate x-coordinate inversions.</p>
+<details class="note">
+<summary>Implementation</summary>
 <div class="highlight"><pre><span></span><code><span class="c1"># dataset.py</span>
 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_flip</span> <span class="ow">and</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
     <span class="n">current_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">current_tensor</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
@@ -619,9 +622,11 @@ and hue uniform across the 4-frame context.</p>
     <span class="n">positions_tensor</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">positions_tensor</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
     <span class="n">target_tensor</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">target_tensor</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 </code></pre></div>
+</details>
 <p><strong>4. Triplet Perturbation</strong></p>
-<p>Perturbs past (x, y) triplets slightly to discourage over-reliance on historical positional certainty, since inference
-would not be as perfect.</p>
+<p>Perturbs past (x, y) triplets slightly to discourage over-reliance on past positional data.</p>
+<details class="note">
+<summary>Implementation</summary>
 <div class="highlight"><pre><span></span><code><span class="c1"># dataset.py</span>
 <span class="k">def</span><span class="w"> </span><span class="nf">perturb_positions</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">max_perturb</span><span class="o">=</span><span class="mf">0.02</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -646,6 +651,7 @@ would not be as perfect.</p>
 
     <span class="k">return</span> <span class="n">positions</span>
 </code></pre></div>
+</details>
 <p><strong>Reflections on Data Design Choices</strong></p>
 <p>Some transformations such as affine warps and perspective distortions were intentionally excluded to preserve physical 
 realism. However, in hindsight, random rescaling would have added resilience to changes in video scale, something the 
@@ -656,73 +662,68 @@ current models remain sensitive to (see <a href="../results_mkdocs/#limitations"
 The input size for both is 300 x 300, hence we must downsample all 4 frames before extracting feature maps. 
 I picked the B3 version for both as it strikes a good balance between input resolution and FLOPs.</p>
 <p><strong>Stage-2 CNN backbones:</strong> stage 2 uses either EfficientNet B0 or EfficientNetV2 B0, both with input dimensions of 
-224×224. This defines the precise crop size taken from the original frame, centered around the Stage 1 estimate.</p>
-<p>B0 was chosen for its very low FLOPs, aligning with our goal of high FPS inference. However, the small crop size means 
-the tolerance for stage-1 error is limited; only ±112 pixels in each direction. This makes accurate coarse localization 
-in stage 1 especially critical.</p>
+224×224. This defines the precise crop size taken from the original frame, centered around the Stage 1 estimate.
+B0 was chosen for its very low FLOPs. However, the small crop size means 
+the tolerance for stage-1 error is limited; only ±112 pixels in each direction.</p>
 <p><strong>Heatmap paradigm:</strong> In later versions of both stages (see <a href="../model_development_log_mkdocs/">Model Development Log</a>), all models use heatmap-based 
-localization rather than regressing coordinates directly with an MLP.</p>
+localization.</p>
 <figure>
-<p><img alt="Figure 4: Demonstration of the heatmap approach" src="../Figures/heatmap_paradigm.png" width="80%" />
+<p><img alt="Figure 3: Demonstration of the heatmap approach" src="../Figures/heatmap_paradigm.png" width="80%" />
   </p>
-<figcaption>Figure 4: Demonstration of the heatmap approach</figcaption>
+<figcaption>Figure 3: Demonstration of the heatmap approach</figcaption>
 </figure>
-<p>On the left of Figure 4, we have a sharp crop of the current frame fed into a trained stage-2 model. The model slices 
-the crop into a 14 x 14 grid. </p>
+<p>On the left of Figure 3, we feed a crop of the current frame into a trained stage-2 model. The crop is first sliced 
+into a 14 x 14 grid. </p>
 <p>For each cell in the grid, the model looks at that cell in the current and past 
-3 crops and outputs a single real number representing how likely it thinks that cell contains the shuttle head. 
-Applying softmax gives a probability distribution, which we average to get a prediction, which in this case is very close 
-to the ground truth (GT). </p>
-<p><strong>Interpolation physics model:</strong>  for stage 2, past triplets contribute to the overall heatmap through a simple 
-interpolation model: take 3 triplets in the past and perform a quadratic interpolation on the xy-coordinates to predict 
+3 crops and outputs a single real number representing how likely that cell contains the shuttle head. 
+Applying softmax gives a probability distribution, which we average to get a positional prediction, which in this case 
+is very close to the ground truth (GT). </p>
+<p><strong>Interpolation physics model:</strong> past triplets contribute to the overall heatmap through a simple 
+interpolation model: take 3 triplets in the past and perform quadratic interpolation on the xy-coordinates to predict 
 the xy-coordinates of the current triplet.</p>
-<p>As shown in Figure 5, this generates a heatmap of its own, which we can add 
+<p>Figure 4 shows that this generates a heatmap of its own, which we add 
 to the CNN-heatmap to influence the final prediction. A quadratic interpolation was picked as it is robust to 
-overfitting and can be expressed neatly in closed form, given below.</p>
-<div class="highlight"><pre><span></span><code><span class="c1"># auxiliary_heatmap.py</span>
-<span class="n">x_pred</span> <span class="o">=</span> <span class="n">x_1</span> <span class="o">-</span> <span class="mi">3</span><span class="o">*</span><span class="n">x_2</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="n">x_3</span> <span class="c1">#  x_1 represents the x-coordinate of the last triplet</span>
-<span class="n">y_pred</span> <span class="o">=</span> <span class="n">y_1</span> <span class="o">-</span> <span class="mi">3</span><span class="o">*</span><span class="n">y_2</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="n">y_3</span>
-</code></pre></div>
+overfitting and can be expressed neatly in closed form.</p>
 <figure>
-<p><img alt="Figure 5: Example of heatmap generated by quadratic interpolation" src="../Figures/interpolation_heatmap.png" width="80%" />
+<p><img alt="Figure 4: Example of heatmap generated by quadratic interpolation" src="../Figures/interpolation_heatmap.png" width="80%" />
   </p>
-<figcaption>Figure 5: Example of heatmap generated by quadratic interpolation</figcaption>
+<figcaption>Figure 4: Example of heatmap generated by quadratic interpolation</figcaption>
 </figure>
 <hr />
 <h2 id="modes-of-inference">Modes of inference<a class="headerlink" href="#modes-of-inference" title="Permanent link">&para;</a></h2>
-<p>This subsection should belong under <em>Key design decisions</em>, but is promoted to section status due to its complexity.</p>
-<p>At inference time, we choose between two distinct single-frame inference steps, each offering different trade-offs 
+<p>At inference time, we choose between two distinct inference steps, which offer different trade-offs 
 between accuracy and computational cost.</p>
 <hr />
 <p><strong>Calibration step</strong> closely resembles the inference pipeline described in Figure 1, with two key modifications:</p>
 <ul>
 <li>We employ an ensemble of two stage-2 models (a main model and a supporting model) to jointly predict the shuttle 
-  head’s visibility. This ensemble approach improves visibility prediction accuracy at the cost of 
-  doubling stage-2 compute. However, visibility prediction remains challenging and is prioritized for further updates.</li>
-<li>Instead of zooming in directly on the rough estimate (x_rough, y_rough), we construct an equilateral triangle of 
-  circumradius 0.06 centered at that point and apply zooming at its three vertices. This strategy increases the stage-2 
-  catchment area substantially, though it triples the computational cost.</li>
+  head’s visibility. This ensemble approach improves visibility prediction at the cost of 
+  doubling stage-2 compute. However, visibility prediction remains challenging and is prioritized for updates.</li>
+<li>Instead of zooming in on the rough estimate (x_rough, y_rough), we construct an equilateral triangle of 
+  circumradius 0.06 centered at that point and zoom in at its three vertices. This increases the stage-2 
+  catchment area substantially, though it triples computational cost.</li>
 </ul>
 <p>As a result, we obtain six prediction triplets from stage 2: three spatial zooms from the triangle, each processed by 
-two models. We then select the pair with the highest visibility score, and use the 
+two models. We select the pair with the highest visibility score, and use the 
 triplet predicted by the main stage-2 model as the final output.</p>
 <p>In summary, running a calibration step on a frame invokes 4 passes through B3 (current + 3 past) and 24 passes through 
-B0, taking roughly 20 GFLOPs including other non-backbone procedures. Its large catchment area with heavy computational 
+B0, taking roughly 20 GFLOPs including other non-backbone computations. Its large catchment area with heavy computational 
 cost gives it the name calibration.</p>
 <p><strong>Fast step</strong> bypasses both stage-1 and triangle construction, zooming in directly on the coordinates predicted 
-in the previous frame. If the previous triplet is (0, 0, 0), we skip the current frame entirely and return (0, 0, 0). </p>
-<p>Skipping stage 1 is justified since the shuttle head typically remains visible in the crop centered around its prior 
-position. For visibility prediction, fast step still uses two stage-2 models for ensemble voting.</p>
-<p>In summary, running a fast step on a frame invokes only 8 passes through B0, taking roughly 4 GFLOPs; this is 
-significantly cheaper than the calibration step, hence its name.</p>
+in the previous frame. If the previous triplet is (0, 0, 0), we skip all computations and return (0, 0, 0). For 
+visibility prediction, fast step still uses two stage-2 models for ensemble voting.</p>
+<p>In summary, running a fast step on a frame invokes only 8 passes through B0, taking roughly 4 GFLOPs.</p>
 <hr />
 <p>Modes of inference answer the question “which step should we use for the current frame”? We introduce 
 <strong>calibration mode</strong>, <strong>fast mode</strong> and <strong>smart mode</strong>.</p>
 <h3 id="calibration-mode">Calibration mode<a class="headerlink" href="#calibration-mode" title="Permanent link">&para;</a></h3>
-<p>Runs a calibration step every single frame. Very slow and surprisingly unstable (the predictions tend to jump around); 
+<p>Runs a calibration step every single frame. Very slow and unstable (the predictions tend to jump around); 
 serves more as a benchmark than a practical inference method.</p>
 <h3 id="fast-mode">Fast mode<a class="headerlink" href="#fast-mode" title="Permanent link">&para;</a></h3>
-<p>Runs a calibration step once every <code>self.fast_calib_interval</code> frames, where <code>self.fast_calib_interval</code> is configurable. Every other frame is processed with fast steps. This mode produces more stable predictions than calibration mode, and is naturally much faster.</p>
+<p>Runs a calibration step once every <code>self.fast_calib_interval</code> frames (configurable). Every other frame is processed with 
+fast steps. This mode is more stable and much faster than calibration mode.</p>
+<details class="note">
+<summary>Implementation</summary>
 <div class="highlight"><pre><span></span><code><span class="c1"># engine.py</span>
 <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;fast&quot;</span><span class="p">:</span>
     <span class="c1"># Calibrate every K frames regardless</span>
@@ -739,18 +740,21 @@ serves more as a benchmark than a practical inference method.</p>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">gx</span><span class="p">,</span> <span class="n">gy</span><span class="p">,</span> <span class="n">gv</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
 </code></pre></div>
+</details>
 <hr />
 <h3 id="smart-mode">Smart mode<a class="headerlink" href="#smart-mode" title="Permanent link">&para;</a></h3>
-<p>The smart mode of inference was developed around the philosophy of running calibration steps only when we detect 
-pathological behaviors. Below, we outline the problems smart mode is designed to detect, the triggers for each, 
+<p>Runs calibration steps only when we detect 
+pathological behaviors. Below, we outline the pathologies smart mode detects
 and the corresponding mitigation strategies.</p>
-<p><strong>Problem 1: false negatives from missed shuttle visibility</strong></p>
+<p><strong>Pathology 1: false negatives from missed shuttle visibility</strong></p>
 <p>One problem with fast mode is that if any step predicts “invisible shuttle head”, we would have a sequence of 
 “invisible shuttle head” predictions until the next calibration step. In the worst case, we must wait 
-<code>self.fast_calib_interval</code> frames before the next calibration; potentially a lot of false negatives.</p>
+<code>self.fast_calib_interval</code> frames; potentially a lot of false negatives.</p>
 <p><strong>Solution 1A: detect newly invisible predictions</strong></p>
 <p>If the previous prediction was visible, but the current fast prediction is invisible, smart mode triggers a calibration 
 step to verify whether the shuttle head is truly missing.</p>
+<details class="note">
+<summary>Implementation</summary>
 <div class="highlight"><pre><span></span><code><span class="c1"># engine.py</span>
 <span class="n">p3x</span><span class="p">,</span> <span class="n">p3y</span><span class="p">,</span> <span class="n">p3v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fast_step</span><span class="p">(</span><span class="n">last_xy</span><span class="p">,</span> <span class="n">cur_full</span><span class="p">,</span> <span class="n">pos30</span><span class="p">)</span>
 <span class="n">last_two</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_two</span><span class="p">(</span><span class="n">positions_deque</span><span class="p">)</span>
@@ -762,9 +766,12 @@ step to verify whether the shuttle head is truly missing.</p>
     <span class="bp">self</span><span class="o">.</span><span class="n">freshly_invisible</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="n">gx</span><span class="p">,</span> <span class="n">gy</span><span class="p">,</span> <span class="n">gv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration_step</span><span class="p">(</span><span class="n">cur_full</span><span class="p">,</span> <span class="n">pos30</span><span class="p">)</span>
 </code></pre></div>
+</details>
 <p><strong>Solution 1B: cap the maximum consecutive invisibility tolerated</strong></p>
 <p>On top of this, we define <code>self.inv_len</code> as the number of consecutive “invisible shuttle head” predictions tolerated 
 before triggering a calibration step.</p>
+<details class="note" open="open">
+<summary>Implementation</summary>
 <div class="highlight"><pre><span></span><code><span class="c1"># engine.py</span>
 <span class="c1"># (1) N consecutive invisibles?</span>
 <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_n_invisible</span><span class="p">(</span><span class="n">positions_deque</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv_len</span><span class="p">)</span> \
@@ -772,22 +779,25 @@ before triggering a calibration step.</p>
     <span class="n">gx</span><span class="p">,</span> <span class="n">gy</span><span class="p">,</span> <span class="n">gv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration_step</span><span class="p">(</span><span class="n">cur_full</span><span class="p">,</span> <span class="n">pos30</span><span class="p">)</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">_last_n_invisible_trigger_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_t</span>
 </code></pre></div>
-<p>The logic above also ensures that if, for example, <code>self.inv_len = 8</code>, the calibration check is performed at most once 
-every 8 frames—even if the consecutive invisible condition continues to be met. Without this safeguard, the system 
-would naïvely re-check every subsequent frame after the 8th, leading to redundant calibration attempts.</p>
+</details>
+<p>The code above also ensures that if, for example, <code>self.inv_len = 8</code>, the calibration check is performed at most once 
+every 8 frames. Without this safeguard, the system 
+would re-check every subsequent frame after the 8th invisible prediction, leading to redundant calibration attempts.</p>
 <hr />
 <p><strong>Problem 2: false positives from background artifacts</strong></p>
-<p>Due to visibility prediction being particularly challenging, it is frequently the case in both calibration and fast 
+<p>Due to poor visibility prediction, it is frequently the case in both calibration and fast 
 modes that we get a sequence of “visible shuttle head” predictions in the background or over players’ shirts. 
 In egregious cases, the false positive predictions flit across the screen at a speed impossible for real shuttle heads.</p>
 <p><strong>Solution 2A: large angular deviations</strong></p>
-<p>It was observed that these false positives do not follow a smooth trajectory and are characterized by large angles 
+<p>These false positives do not follow a smooth trajectory and are characterized by large angles 
 between consecutive predictions. Thus, we define a configurable variable <code>self.angle_thresh</code> such that if the coordinates 
 of three consecutive visible predictions form an angle larger than <code>self.angle_thresh</code>, then we trigger a calibration 
 step.</p>
 <p><strong>Solution 2B: large positional jumps</strong></p>
 <p>Similarly, if the Euclidean distance between the last prediction and the current fast prediction exceeds <code>jump_thresh</code>, 
 we trigger a calibration step.</p>
+<details class="note">
+<summary>Implementation</summary>
 <div class="highlight"><pre><span></span><code><span class="c1"># engine.py</span>
 <span class="n">p3x</span><span class="p">,</span> <span class="n">p3y</span><span class="p">,</span> <span class="n">p3v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fast_step</span><span class="p">(</span><span class="n">last_xy</span><span class="p">,</span> <span class="n">cur_full</span><span class="p">,</span> <span class="n">pos30</span><span class="p">)</span>
 <span class="n">last_two</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_two</span><span class="p">(</span><span class="n">positions_deque</span><span class="p">)</span>
@@ -813,6 +823,7 @@ we trigger a calibration step.</p>
             <span class="n">gx</span><span class="p">,</span> <span class="n">gy</span><span class="p">,</span> <span class="n">gv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration_step</span><span class="p">(</span><span class="n">cur_full</span><span class="p">,</span> <span class="n">pos30</span><span class="p">)</span>
             <span class="k">return</span> <span class="n">gx</span><span class="p">,</span> <span class="n">gy</span><span class="p">,</span> <span class="n">gv</span><span class="p">,</span> <span class="kc">True</span>
 </code></pre></div>
+</details>
 <hr />
 <p><strong>Problem 3: frequent calibration triggers indicate model uncertainty</strong></p>
 <p>So far, if we detect unstable behavior during a fast step, we 
@@ -823,9 +834,11 @@ and during inference, we have no way of knowing if the prediction returned from 
 calibration steps frequently during a short time window, then we can be confident that some instability is plaguing 
 inference e.g. a player’s white shirt suddenly catching bright glints, giving patches that resemble shuttles. </p>
 <p>To 
-penalize triggering many calibrations within a short time window, we define a buffer <code>calib_window</code> which records the 
+penalize too many calibrations triggered within a short time window, we define a buffer <code>calib_window</code> which records the 
 number of calibrations within the last 6 frames. If at any time, that number exceeds 4, then we replace the last 6 
 triplets with (0, 0, 0) to eliminate the noisy output.</p>
+<details class="note">
+<summary>Implementation</summary>
 <div class="highlight"><pre><span></span><code><span class="c1"># video_inferencer.py</span>
 <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">calib_window</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span>
     <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">calib_window</span><span class="p">)</span>
@@ -836,11 +849,12 @@ triplets with (0, 0, 0) to eliminate the noisy output.</p>
     <span class="n">gx</span><span class="p">,</span> <span class="n">gy</span><span class="p">,</span> <span class="n">gv</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">0</span>
     <span class="n">calib_window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
 </code></pre></div>
+</details>
 <hr />
 <p>One might say that these artificial safeguards are a sign of weak models; in the case of visibility prediction, that is 
 admittedly true. However, setting aside the visibility issue, the safeguards simply inform the pipeline what we know 
 about shuttle physics. </p>
-<p>Moreover, when a human is annotating the frames in the first place, they are implicitly applying these checks e.g. 
+<p>Moreover, when a human is annotating the frames, they are implicitly applying these checks e.g. 
 “this blob really looks like a shuttle, but it’s miles away from where I last confidently predicted the shuttle head, 
 so it’s probably just background noise”.</p>
 <p>In practice, smart mode averages at 86 FPS and is much more stable than fast mode, making it the recommended mode of 
