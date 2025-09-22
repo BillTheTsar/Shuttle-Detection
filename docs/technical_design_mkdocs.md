@@ -260,7 +260,7 @@ serves more as a benchmark than a practical inference method.
 Runs a calibration step once every `self.fast_calib_interval` frames (configurable). Every other frame is processed with 
 fast steps. This mode is more stable and much faster than calibration mode.
 
-??? note "Implementation"
+???+ note "Implementation"
     ```python
     # engine.py
     elif self.mode == "fast":
