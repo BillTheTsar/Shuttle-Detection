@@ -1,0 +1,1140 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://billthetsar.github.io/Shuttle-Detection/report/">
+      
+      
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.20">
+    
+    
+      
+        <title>Predicting Shuttle Landing Positions from Video Frames - Shuttle Detection</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.e53b48f4.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#predicting-shuttle-landing-positions-from-video-frames" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../index_mkdocs.md" title="Shuttle Detection" class="md-header__button md-logo" aria-label="Shuttle Detection" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Shuttle Detection
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Predicting Shuttle Landing Positions from Video Frames
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/BillTheTsar/Shuttle-Detection" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../index_mkdocs.md" title="Shuttle Detection" class="md-nav__button md-logo" aria-label="Shuttle Detection" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.99.99 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88z"/></svg>
+
+    </a>
+    Shuttle Detection
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/BillTheTsar/Shuttle-Detection" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 7.0.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2025 Fonticons, Inc.--><path d="M439.6 236.1 244 40.5c-5.4-5.5-12.8-8.5-20.4-8.5s-15 3-20.4 8.4L162.5 81l51.5 51.5c27.1-9.1 52.7 16.8 43.4 43.7l49.7 49.7c34.2-11.8 61.2 31 35.5 56.7-26.5 26.5-70.2-2.9-56-37.3L240.3 199v121.9c25.3 12.5 22.3 41.8 9.1 55-6.4 6.4-15.2 10.1-24.3 10.1s-17.8-3.6-24.3-10.1c-17.6-17.6-11.1-46.9 11.2-56v-123c-20.8-8.5-24.6-30.7-18.6-45L142.6 101 8.5 235.1C3 240.6 0 247.9 0 255.5s3 15 8.5 20.4l195.6 195.7c5.4 5.4 12.7 8.4 20.4 8.4s15-3 20.4-8.4l194.7-194.7c5.4-5.4 8.4-12.8 8.4-20.4s-3-15-8.4-20.4"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index_mkdocs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../project_overview_mkdocs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Project Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../technical_design_mkdocs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Technical Design
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../model_development_log_mkdocs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Model Log
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../results_mkdocs/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Results
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../videos/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Videos
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+<h1 id="predicting-shuttle-landing-positions-from-video-frames">Predicting Shuttle Landing Positions from Video Frames<a class="headerlink" href="#predicting-shuttle-landing-positions-from-video-frames" title="Permanent link">&para;</a></h1>
+<p><em>A machine learning project by Bill Zhang</em></p>
+<hr />
+<h2 id="abstract">Abstract<a class="headerlink" href="#abstract" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>This report fleshes out a two-stage computer vision system capable of localizing the position of a badminton shuttle in 
+video footage, frame by frame. Over two months, I developed 11 model versions which incorporate contextual motion 
+modeling and heatmap-based inference. The final system achieves real-time inference speeds (86 FPS) and 
+sub-pixel precision on standard 1080p footage, with practical applications in sports analytics and even shot 
+anticipation.</p>
+</blockquote>
+<hr />
+<h2 id="table-of-contents">Table of Contents<a class="headerlink" href="#table-of-contents" title="Permanent link">&para;</a></h2>
+<ul>
+<li><a href="#1-introduction">1. Introduction</a></li>
+<li><a href="#2-project-overview">2. Project Overview</a></li>
+<li><a href="#3-technical-design">3. Technical Design</a></li>
+<li><a href="#4-model-development-log">4. Model Development Log</a></li>
+<li><a href="#5-results">5. Results</a></li>
+</ul>
+<hr />
+<h1 id="1-introduction">1. Introduction<a class="headerlink" href="#1-introduction" title="Permanent link">&para;</a></h1>
+<h2 id="problem-statement">Problem statement<a class="headerlink" href="#problem-statement" title="Permanent link">&para;</a></h2>
+<p><strong>Given a video of a badminton game, identify the precise position of the badminton shuttle head in all frames in which it is present and in play.</strong> </p>
+<p>This task is deceptively simple and yet rich with challenges that make it both an academically and practically worthwhile problem:</p>
+<ul>
+<li><strong>Miniscule object size:</strong> Badminton shuttles are extremely small, occupying roughly 1/30 of both the width and height
+    of the frame (roughly 0.11% of the total frame area). The shuttle head is a small part of an already tiny object, 
+    making it extraordinarily difficult to localize with precision.</li>
+<li><strong>Complex object shape:</strong> Badminton shuttles exhibit a wide variety of silhouettes and patterns depending on the 
+  viewing angle. This is in contrast to most ball sports, where the silhouette of the “ball” is a circle, lending easily
+  to traditional convolutional filters.</li>
+<li><strong>High speed and occlusion:</strong> Upon impact, badminton shuttles, albeit for a split second, become the fastest objects 
+  among all ball sports. There is significant blur and occlusion due to the racket, making precise positional 
+  predictions very challenging.</li>
+</ul>
+<h3 id="motivations">Motivations<a class="headerlink" href="#motivations" title="Permanent link">&para;</a></h3>
+<p>Whether we want to analyze the shot selection of professionals, anticipate the shot played a split second before impact,
+or provide an alternative to the Hawkeye technology, determining the precise position of the shuttle head is the 
+necessary foundation for any high-level automation task. Also, it is a fun project that I thought would be 
+computationally feasible and highly rewarding with a reasonable development time of 1-2 months.</p>
+<hr />
+<h3 id="assumptions-and-definitions">Assumptions and definitions<a class="headerlink" href="#assumptions-and-definitions" title="Permanent link">&para;</a></h3>
+<ul>
+<li>We use only the frames of a 1920x1080 resolution video from as input.</li>
+<li>The frame rate of the video is at least 30 FPS, with no theoretical upper limit, though much beyond 60 FPS is impractical.</li>
+<li>A shuttle is in play from the moment it leaves the player’s hand during serves and stops being in play when it stops 
+  moving on the ground (not when it lands).</li>
+<li>We use present interchangeably with visible. Thus, a shuttle head is present if and only if it is not fully occluded 
+  (occlusion by the racket does not qualify as fully occluded, as it is partial) and in the frame.</li>
+</ul>
+<h3 id="ideal-result">Ideal result<a class="headerlink" href="#ideal-result" title="Permanent link">&para;</a></h3>
+<p>A model which can perfectly predict whether a shuttle is in play and present. If it is, return (x_pred, y_pred, 1) 
+where x_pred and y_pred are the normalized coordinates in [0, 1] x [0, 1]. Otherwise, return (0, 0, 0) for that frame 
+(the last entry represents visibility). Furthermore, the model should be fast enough to achieve real-time inference 
+on consumer GPUs, which we define to be 60 FPS.</p>
+<h3 id="extensions-considered">Extensions considered<a class="headerlink" href="#extensions-considered" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Shot prediction:</strong> I originally wanted to predict the shot a player makes moments before impact. Such a prediction 
+   model would require not only video data, but features such as the shuttle head position, racket orientation and pose 
+   estimation of the players. I soon realized that the time required for such a project would be infeasible. Worse, the 
+   existence of such a model is not guaranteed; if the best players in the world are frequently fooled by deceptions, 
+   what chances does a model trained by an undergraduate student have?</li>
+<li><strong>Commentary:</strong> Combined with a bounding box + multi-object tracking model for the players, the ideal-result model 
+   could comment on the game, offering simple remarks such as “player 1 hit a cross-court drop from the back-court left 
+   corner” and “player 3 played a winning smash straight down the line”.</li>
+</ul>
+<hr />
+<p><br></p>
+<h1 id="2-project-overview">2. Project Overview<a class="headerlink" href="#2-project-overview" title="Permanent link">&para;</a></h1>
+<h2 id="key-information">Key information<a class="headerlink" href="#key-information" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Duration:</strong> 2 months, 13/07/2025 - 12/09/2025</li>
+<li><strong>Project type:</strong> independent research and development</li>
+<li><strong>Domain:</strong> supervised learning in computer vision</li>
+<li><strong>Primary language:</strong> Python</li>
+</ul>
+<h2 id="achievements">Achievements<a class="headerlink" href="#achievements" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Independently executed the full ML development cycle</strong>, from data creation (5800 labeled samples), preprocessing 
+  and model architecture design to training, iterative redesigns (11 versioned models), and deployment using TensorRT.</li>
+<li><strong>Compiled a custom-labeled dataset of 5800 frames</strong>, where final-stage predictions deviated by only 3-4 pixels on 
+  average from the manually labeled shuttle head positions; an impressive level of precision given the object’s small 
+  size and extreme speed.</li>
+<li><strong>Built a two-stage computer vision system that competently solves the shuttle localization task</strong> proposed in the 
+  problem statement. The system achieves real-time inference at 86 FPS, comfortably surpassing the 60 FPS requirement 
+  for live video processing.</li>
+<li><strong>Delivered an inference engine running on consumer-grade GPUs</strong> using <code>.engine</code> model exports. The optimized 
+  deployment pipeline reduces startup latency from 9 to &lt;1 seconds and doubles throughput with layer fusion and FP16 
+  precision.</li>
+</ul>
+<hr />
+<h2 id="tools-used-and-learned-during-the-project">Tools used and learned during the project<a class="headerlink" href="#tools-used-and-learned-during-the-project" title="Permanent link">&para;</a></h2>
+<h3 id="deep-learning-and-model-deployment">Deep learning and model deployment<a class="headerlink" href="#deep-learning-and-model-deployment" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>PyTorch</strong> (learned): for implementing multiple model architecture designs, model training scripts and deployment 
+  (though inference using TensorRT engine exports is 2.5 times faster).</li>
+<li><strong>ONNX and TensorRT</strong> (learned): for accelerated deployment by exporting .pth model weight files to .onnx and .engine 
+  files respectively. With layer fusion and mixed precision (almost all in fp16), inference jumped from 42 FPS to 86 
+  FPS on average.</li>
+<li><strong>EfficientNet B0, EfficientNetv2 B0 and B3</strong> (learned): these formed the CNN backbones of both stages, from which 
+  FPN and BiFPN techniques were applied on layers of varying strides to produce heat maps. These were chosen for their 
+  light parameter counts and low FLOPs compared to ResNet and YOLO-based methods.</li>
+</ul>
+<h3 id="data-infrastructure-and-training">Data infrastructure and training<a class="headerlink" href="#data-infrastructure-and-training" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>Paperspace Gradient</strong> (learned): a cloud-based workflow for executing model training on rented A4000 GPU in the 
+  Notebooks environment with persistent storage before acquiring a laptop with RTX 5080 GPU.</li>
+<li><strong>Label Studio</strong> (learned): for importing raw data hosted on GitHub, facilitating hand-labeling and exporting the 
+  labeled samples into a csv file for downstream cleaning.</li>
+<li><strong>Hugging Face</strong> (learned): for hosting the entire processed dataset to be imported into the Paperspace Gradient 
+  notebook (direct uploading, even zipped, was impossible).</li>
+</ul>
+<h3 id="data-processing-and-visualization">Data processing and visualization<a class="headerlink" href="#data-processing-and-visualization" title="Permanent link">&para;</a></h3>
+<ul>
+<li><strong>TensorBoard</strong> (learned): for visualizing training and validation losses during training, identifying model 
+  overfitting and monitoring parameters of interest.</li>
+<li><strong>Pandas, numpy and matplotlib</strong> (used): pandas was used for data cleaning, converting the csv files exported from 
+  Label Studio to the processed dataset directly used for model training. numpy and matplotlib were used for verifying 
+  the correctness of data augmentation techniques, visualizing model heatmap outputs and prototype adjustments.</li>
+</ul>
+<hr />
+<h2 id="skills-picked-up-during-the-project">Skills picked up during the project<a class="headerlink" href="#skills-picked-up-during-the-project" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>End-to-end pipeline design of a two-stage system</strong>, incorporating modular training, hard example mining for stage 2 
+  and a tailored method of integrating the two stages for stable inference.</li>
+<li><strong>Iterative model redesigns</strong> based on TensorBoard log patterns and inference stability. From developing 11 versioned 
+  models, I have seen improvements from complete paradigm shifts e.g. switching from MLP on global average pooling to 
+  heatmap-based inference to subtle yet impactful changes e.g. adjusting Gaussian noise magnitudes.</li>
+<li><strong>Tensor manipulation up to rank 5</strong>, including reshaping, broadcasting, bit-masking, and squeezing.</li>
+<li><strong>Using Label Studio to manually annotate 5800 video frames</strong> with shuttle head positions, then using pandas with 
+  anomaly handling to produce training-ready datasets.</li>
+<li><strong>Learned to export PyTorch state dict models to ONNX, and then to TensorRT .engine files</strong> with optimized 
+  performance settings and batch-size flexibility during inference.</li>
+<li><strong>Learned to adapt training for Paperspace Gradient</strong> with its CLI-based model versioning and environment setup under 
+  compute and memory restraints.</li>
+</ul>
+<hr />
+<p><br></p>
+<h1 id="3-technical-design">3. Technical Design<a class="headerlink" href="#3-technical-design" title="Permanent link">&para;</a></h1>
+<h2 id="pipeline-overview">Pipeline overview<a class="headerlink" href="#pipeline-overview" title="Permanent link">&para;</a></h2>
+<p>In spite of having 11 versioned models (4 for stage 1, 7 for stage 2) with different
+architectures, the general pipeline since the inception of this project has remained constant. </p>
+<p>Rather than presenting 
+the pipeline as a fixed sequence, I describe the underlying challenges it was designed to solve. The pipeline’s 
+structure will fall out naturally as a response to these problems.</p>
+<hr />
+<h3 id="problem-1-high-resolution-requirements-under-real-time-constraints">Problem 1: high-resolution requirements under real-time constraints<a class="headerlink" href="#problem-1-high-resolution-requirements-under-real-time-constraints" title="Permanent link">&para;</a></h3>
+<p>Most popular CNNs like ResNet, AlexNet, YOLOv8 and EfficientNet are capped off at an input resolution of 600x600, 
+which is nowhere near the resolution we need (1920x1080). As we have stated, badminton shuttles typically occupy a 
+height and width 1/30 of the frame, and thus become a blurred blob with any significant downsampling.</p>
+<p>On top of this, we want to achieve inference speeds above 60 FPS, and 
+since FLOPs scale quadratically with resolution, resolutions above 360x360 are not seriously considered. </p>
+<p>On the one hand, we need high resolution to pinpoint the shuttle head, but low resolution to meet runtime constraints.</p>
+<p><strong>Impact on pipeline:</strong></p>
+<p>This is only a problem if we insist on solving the problem statement with one CNN pass per frame. Thus, we must 
+look to a multi-stage pipeline. Here, we are lucky because while locating the precise position of a 
+shuttle head at low resolution is impossible (for someone with 10+ years of experience), finding the approximate region 
+of the shuttle is not. Conceptually, we could look for a white blob or infer from the players’ movements.</p>
+<p>Thus, we split the inference into two stages; stage 1 for locating the approximate region of the shuttle using frames 
+downsampled to low resolution, and stage 2 for precisely locating the shuttle head once we zoom in around the rough 
+prediction (by zooming in, we mean taking a low-resolution but sharp crop around the stage 1 prediction). We thus have 
+a course-to-fine point estimation pipeline.</p>
+<p>This coarse-to-fine pipeline not only satisfies our resolution-FPS requirements but also decouples training, with each 
+stage having its own loss functions, optimizers etc. It also allows us to intelligently combine models from the two 
+stages later to increase inference stability (discussed under Modes of inference).</p>
+<hr />
+<h3 id="problem-2-the-need-for-context">Problem 2: the need for context<a class="headerlink" href="#problem-2-the-need-for-context" title="Permanent link">&para;</a></h3>
+<p>While I was labeling shuttle heads, I would often find them too blurry to localize based on one frame alone. In those 
+cases, I would roll back a few frames, find one in which the shuttle was clearer, and infer from the “good” frame where 
+the shuttle head in the current frame should be. Since shuttle heads follow a smooth 
+trajectory outside of being hit and do not change orientation much between frames, we can accurately infer from 
+past data.</p>
+<p><strong>Impact on pipeline:</strong></p>
+<p>Both stages are fed the current frame, 3 prior frames and a sequence of triplets with structure 
+(x, y, visibility) from the immediate past. For convention, these temporal inputs are ordered oldest to most recent. </p>
+<p>Together, this gives a context-enriched, coarse-to-fine pipeline that leverage the task's physical properties I learned 
+while labeling. Figure 1 illustrates the inference pipeline.</p>
+<figure style="text-align: center;">
+  <img src="Figures/pipeline_diagram.jpeg" alt="pipeline diagram" style="width:80%; height:auto;">
+  <figcaption>Figure 1: Conceptual diagram of the inference pipeline</figcaption>
+</figure>
+
+<hr />
+<h2 id="dataset-overview">Dataset overview<a class="headerlink" href="#dataset-overview" title="Permanent link">&para;</a></h2>
+<p>To build a training set that reflects real-world gameplay, I collected footage from four 1920×1080, 60 FPS badminton 
+videos: three were Creative Commons–licensed from YouTube, and one was personally recorded. My mum and I manually 
+annotated 5,800 samples. After shuffling, 90% of samples were labeled as training, 5% were labeled validation and 
+testing each. The structure of each sample is given in Figure 2.</p>
+<figure style="text-align: center;">
+  <img src="Figures/dataset_sample.png" alt="dataset sample" style="width:80%; height:auto;">
+  <figcaption>Figure 2: Structure of each sample in the dataset</figcaption>
+</figure>
+
+<p>frame is the current frame, the other three are the 3 past frames, with frame-1 being the most recent. positions.csv 
+contains 30 past triplets, with (x_truth, y_truth, 1) if the shuttle head is present in its corresponding frame and 
+(0, 0, 0) otherwise. Lastly, target.csv records the ground truth triplet for the current frame and is used in all loss 
+functions. Figure 3 gives a conceptual overview of the process from raw mp4 to the samples.</p>
+<figure style="text-align: center;">
+  <img src="Figures/video_to_sample_pipeline.png" alt="video to sample pipeline" style="width:80%; height:auto;">
+  <figcaption>Figure 3: process from mp4 -> samples</figcaption>
+</figure>
+
+<hr />
+<h3 id="data-augmentation">Data augmentation<a class="headerlink" href="#data-augmentation" title="Permanent link">&para;</a></h3>
+<p>To maximize robustness across lighting conditions, noise profiles, and camera angles, I implemented a selected set of 
+augmentation techniques, ensuring realism was preserved while still enabling generalization.</p>
+<p><strong>1. Uniform color jitter across frames</strong></p>
+<p>Enhances the models' adaptability to various lighting conditions by changing brightness, contrast, saturation, 
+and hue uniform across the 4-frame context.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># dataset.py</span>
+<span class="bp">self</span><span class="o">.</span><span class="n">color_jitter</span> <span class="o">=</span> <span class="n">torchvision</span><span class="o">.</span><span class="n">transforms</span><span class="o">.</span><span class="n">ColorJitter</span><span class="p">(</span>
+    <span class="n">brightness</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">contrast</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+    <span class="n">saturation</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span> <span class="n">hue</span><span class="o">=</span><span class="mf">0.05</span>
+<span class="p">)</span>
+</code></pre></div>
+<p><strong>2. Independent Gaussian noise per frame</strong></p>
+<p>Prevents overfitting to low-level pixel patterns and encourages focus on higher-level motion and shapes.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># dataset.py</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">apply_noise</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">noise_std</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply different Gaussian noise per frame.</span>
+<span class="sd">    Takes in a list of images and returns a list of tensors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">noisy_frames</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">:</span>
+        <span class="n">img_tensor</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">()(</span><span class="n">img</span><span class="p">)</span>
+        <span class="n">noise_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">noise_std</span><span class="p">)</span>
+        <span class="n">noise</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn_like</span><span class="p">(</span><span class="n">img_tensor</span><span class="p">)</span> <span class="o">*</span> <span class="n">noise_std</span>
+        <span class="n">img_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">img_tensor</span> <span class="o">+</span> <span class="n">noise</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">noisy_frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img_tensor</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">noisy_frames</span>
+</code></pre></div>
+<p><strong>3. Horizontal flipping with positional adjustment</strong></p>
+<p>Simulates mirrored camera angles with appropriate x-coordinate inversions.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># dataset.py</span>
+<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">apply_flip</span> <span class="ow">and</span> <span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">:</span>
+    <span class="n">current_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">current_tensor</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span>
+    <span class="n">past_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">flip</span><span class="p">(</span><span class="n">past_tensor</span><span class="p">,</span> <span class="n">dims</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span>
+    <span class="n">positions_tensor</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">positions_tensor</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">target_tensor</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">target_tensor</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</code></pre></div>
+<p><strong>4. Triplet Perturbation</strong></p>
+<p>Perturbs past (x, y) triplets slightly to discourage over-reliance on historical positional certainty, since inference
+would not be as perfect.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># dataset.py</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">perturb_positions</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">max_perturb</span><span class="o">=</span><span class="mf">0.02</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perturbs visible (x, y) positions in a list or NumPy array.</span>
+<span class="sd">    Args:</span>
+<span class="sd">        positions: list of [x, y, vis] or NumPy array of shape [T, 3]</span>
+<span class="sd">        max_perturb: max change in normalized coords (±)</span>
+<span class="sd">    Returns:</span>
+<span class="sd">        np.ndarray of shape [T, 3] with perturbed positions</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">positions</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">positions</span><span class="p">)):</span>
+        <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">vis</span> <span class="o">=</span> <span class="n">positions</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">vis</span> <span class="o">&gt;=</span> <span class="mf">0.5</span><span class="p">:</span>
+            <span class="n">dx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="n">max_perturb</span><span class="p">,</span> <span class="n">max_perturb</span><span class="p">)</span>
+            <span class="n">dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="n">max_perturb</span><span class="p">,</span> <span class="n">max_perturb</span><span class="p">)</span>
+            <span class="n">new_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">x</span> <span class="o">+</span> <span class="n">dx</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">new_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">y</span> <span class="o">+</span> <span class="n">dy</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+            <span class="n">positions</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_x</span>
+            <span class="n">positions</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">new_y</span>
+            <span class="c1"># visibility stays unchanged</span>
+
+    <span class="k">return</span> <span class="n">positions</span>
+</code></pre></div>
+<p><strong>Reflections on Data Design Choices</strong></p>
+<p>Some transformations such as affine warps and perspective distortions were intentionally excluded to preserve physical 
+realism. However, in hindsight, random rescaling would have added resilience to changes in video scale, something the 
+current models remain sensitive to (see <a href="#limitations">Limitations</a>).</p>
+<hr />
+<h2 id="key-design-decisions">Key design decisions<a class="headerlink" href="#key-design-decisions" title="Permanent link">&para;</a></h2>
+<p><strong>Stage-1 CNN backbones:</strong> stage-1 models used either EfficientNet B3 or EfficientNetv2 B3 as their CNN backbones. 
+The input size for both is 300 x 300, hence we must downsample all 4 frames before extracting feature maps. 
+I picked the B3 version for both as it strikes a good balance between input resolution and FLOPs.</p>
+<p><strong>Stage-2 CNN backbones:</strong> stage 2 uses either EfficientNet B0 or EfficientNetV2 B0, both with input dimensions of 
+224×224. This defines the precise crop size taken from the original frame, centered around the Stage 1 estimate.</p>
+<p>B0 was chosen for its very low FLOPs, aligning with our goal of high FPS inference. However, the small crop size means 
+the tolerance for stage-1 error is limited; only ±112 pixels in each direction. This makes accurate coarse localization 
+in stage 1 especially critical.</p>
+<p><strong>Heatmap paradigm:</strong> In later versions of both stages (see <a href="#4-model-development-log">Model Development Log</a>), all models use heatmap-based 
+localization rather than regressing coordinates directly with an MLP.</p>
+<figure style="text-align: center;">
+  <img src="Figures/heatmap_paradigm.png" alt="heatmap paradigm" style="width:80%; height:auto;">
+  <figcaption>Figure 4: Demonstration of the heatmap approach</figcaption>
+</figure>
+
+<p>On the left of Figure 4, we have a sharp crop of the current frame fed into a trained stage-2 model. The model slices 
+the crop into a 14 x 14 grid. </p>
+<p>For each cell in the grid, the model looks at that cell in the current and past 
+3 crops and outputs a single real number representing how likely it thinks that cell contains the shuttle head. 
+Applying softmax gives a probability distribution, which we average to get a prediction, which in this case is very close 
+to the ground truth (GT). </p>
+<p><strong>Interpolation physics model:</strong>  for stage 2, past triplets contribute to the overall heatmap through a simple 
+interpolation model: take 3 triplets in the past and perform a quadratic interpolation on the xy-coordinates to predict 
+the xy-coordinates of the current triplet.</p>
+<p>As shown in Figure 5, this generates a heatmap of its own, which we can add 
+to the CNN-heatmap to influence the final prediction. A quadratic interpolation was picked as it is robust to 
+overfitting and can be expressed neatly in closed form, given below.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># auxiliary_heatmap.py</span>
+<span class="n">x_pred</span> <span class="o">=</span> <span class="n">x_1</span> <span class="o">-</span> <span class="mi">3</span><span class="o">*</span><span class="n">x_2</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="n">x_3</span> <span class="c1">#  x_1 represents the x-coordinate of the last triplet</span>
+<span class="n">y_pred</span> <span class="o">=</span> <span class="n">y_1</span> <span class="o">-</span> <span class="mi">3</span><span class="o">*</span><span class="n">y_2</span> <span class="o">+</span> <span class="mi">3</span><span class="o">*</span><span class="n">y_3</span>
+</code></pre></div>
+<figure style="text-align: center;">
+  <img src="Figures/interpolation_heatmap.png" alt="interpolation heatmap" style="width:80%; height:auto;">
+  <figcaption>Figure 5: Example of heatmap generated by quadratic interpolation on 3 points</figcaption>
+</figure>
+
+<hr />
+<h2 id="modes-of-inference">Modes of inference<a class="headerlink" href="#modes-of-inference" title="Permanent link">&para;</a></h2>
+<p>This subsection should belong under <em>Key design decisions</em>, but is promoted to section status due to its complexity.</p>
+<p>At inference time, we choose between two distinct single-frame inference steps, each offering different trade-offs 
+between accuracy and computational cost.</p>
+<hr />
+<p><strong>Calibration step</strong> closely resembles the inference pipeline described in Figure 1, with two key modifications:</p>
+<ul>
+<li>We employ an ensemble of two stage-2 models (a main model and a supporting model) to jointly predict the shuttle 
+  head’s visibility. This ensemble approach improves visibility prediction accuracy at the cost of 
+  doubling stage-2 compute. However, visibility prediction remains challenging and is prioritized for further updates.</li>
+<li>Instead of zooming in directly on the rough estimate (x_rough, y_rough), we construct an equilateral triangle of 
+  circumradius 0.06 centered at that point and apply zooming at its three vertices. This strategy increases the stage-2 
+  catchment area substantially, though it triples the computational cost.</li>
+</ul>
+<p>As a result, we obtain six prediction triplets from stage 2: three spatial zooms from the triangle, each processed by 
+two models. We then select the pair with the highest visibility score, and use the 
+triplet predicted by the main stage-2 model as the final output.</p>
+<p>In summary, running a calibration step on a frame invokes 4 passes through B3 (current + 3 past) and 24 passes through 
+B0, taking roughly 20 GFLOPs including other non-backbone procedures. Its large catchment area with heavy computational 
+cost gives it the name calibration.</p>
+<p><strong>Fast step</strong> bypasses both stage-1 and triangle construction, zooming in directly on the coordinates predicted 
+in the previous frame. If the previous triplet is (0, 0, 0), we skip the current frame entirely and return (0, 0, 0). </p>
+<p>Skipping stage 1 is justified since the shuttle head typically remains visible in the crop centered around its prior 
+position. For visibility prediction, fast step still uses two stage-2 models for ensemble voting.</p>
+<p>In summary, running a fast step on a frame invokes only 8 passes through B0, taking roughly 4 GFLOPs; this is 
+significantly cheaper than the calibration step, hence its name.</p>
+<hr />
+<p>Modes of inference answer the question “which step should we use for the current frame”? We introduce 
+<strong>calibration mode</strong>, <strong>fast mode</strong> and <strong>smart mode</strong>.</p>
+<h3 id="calibration-mode">Calibration mode<a class="headerlink" href="#calibration-mode" title="Permanent link">&para;</a></h3>
+<p>Runs a calibration step every single frame. Very slow and surprisingly unstable (the predictions tend to jump around); 
+serves more as a benchmark than a practical inference method.</p>
+<h3 id="fast-mode">Fast mode<a class="headerlink" href="#fast-mode" title="Permanent link">&para;</a></h3>
+<p>Runs a calibration step once every <code>self.fast_calib_interval</code> frames, where <code>self.fast_calib_interval</code> is configurable. Every other frame is processed with fast steps. This mode produces more stable predictions than calibration mode, and is naturally much faster.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># engine.py</span>
+<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;fast&quot;</span><span class="p">:</span>
+    <span class="c1"># Calibrate every K frames regardless</span>
+    <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_t</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">fast_calib_interval</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">gx</span><span class="p">,</span> <span class="n">gy</span><span class="p">,</span> <span class="n">gv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration_step</span><span class="p">(</span><span class="n">cur_full</span><span class="p">,</span> <span class="n">pos30</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_roll_past</span><span class="p">(</span><span class="n">cur_full</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_t</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">return</span> <span class="n">gx</span><span class="p">,</span> <span class="n">gy</span><span class="p">,</span> <span class="n">gv</span><span class="p">,</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Use last if visible; else calibration</span>
+        <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">positions_deque</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">2</span><span class="p">])</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">last_xy</span> <span class="o">=</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">positions_deque</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span> <span class="nb">float</span><span class="p">(</span><span class="n">positions_deque</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="n">gx</span><span class="p">,</span> <span class="n">gy</span><span class="p">,</span> <span class="n">gv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fast_step</span><span class="p">(</span><span class="n">last_xy</span><span class="p">,</span> <span class="n">cur_full</span><span class="p">,</span> <span class="n">pos30</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">gx</span><span class="p">,</span> <span class="n">gy</span><span class="p">,</span> <span class="n">gv</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</code></pre></div>
+<hr />
+<h3 id="smart-mode">Smart mode<a class="headerlink" href="#smart-mode" title="Permanent link">&para;</a></h3>
+<p>The smart mode of inference was developed around the philosophy of running calibration steps only when we detect 
+pathological behaviors. Below, we outline the problems smart mode is designed to detect, the triggers for each, 
+and the corresponding mitigation strategies.</p>
+<p><strong>Problem 1: false negatives from missed shuttle visibility</strong></p>
+<p>One problem with fast mode is that if any step predicts “invisible shuttle head”, we would have a sequence of 
+“invisible shuttle head” predictions until the next calibration step. In the worst case, we must wait 
+<code>self.fast_calib_interval</code> frames before the next calibration; potentially a lot of false negatives.</p>
+<p><strong>Solution 1A: detect newly invisible predictions</strong></p>
+<p>If the previous prediction was visible, but the current fast prediction is invisible, smart mode triggers a calibration 
+step to verify whether the shuttle head is truly missing.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># engine.py</span>
+<span class="n">p3x</span><span class="p">,</span> <span class="n">p3y</span><span class="p">,</span> <span class="n">p3v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fast_step</span><span class="p">(</span><span class="n">last_xy</span><span class="p">,</span> <span class="n">cur_full</span><span class="p">,</span> <span class="n">pos30</span><span class="p">)</span>
+<span class="n">last_two</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_two</span><span class="p">(</span><span class="n">positions_deque</span><span class="p">)</span>
+<span class="c1"># if last_two is not None:</span>
+<span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">v1</span><span class="p">),</span> <span class="p">(</span><span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">v2</span><span class="p">)</span> <span class="o">=</span> <span class="n">last_two</span>  <span class="c1"># p1, p2</span>
+<span class="n">v1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">v1</span><span class="p">);</span> <span class="n">v2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span>
+<span class="c1"># trigger 4: p2 (last prediction) visible but p3 invisible</span>
+<span class="k">if</span> <span class="n">v2</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">p3v</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">freshly_invisible</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">gx</span><span class="p">,</span> <span class="n">gy</span><span class="p">,</span> <span class="n">gv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration_step</span><span class="p">(</span><span class="n">cur_full</span><span class="p">,</span> <span class="n">pos30</span><span class="p">)</span>
+</code></pre></div>
+<p><strong>Solution 1B: cap the maximum consecutive invisibility tolerated</strong></p>
+<p>On top of this, we define <code>self.inv_len</code> as the number of consecutive “invisible shuttle head” predictions tolerated 
+before triggering a calibration step.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># engine.py</span>
+<span class="c1"># (1) N consecutive invisibles?</span>
+<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_n_invisible</span><span class="p">(</span><span class="n">positions_deque</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv_len</span><span class="p">)</span> \
+    <span class="ow">and</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_t</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_n_invisible_trigger_frame</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inv_len</span><span class="p">:</span>
+    <span class="n">gx</span><span class="p">,</span> <span class="n">gy</span><span class="p">,</span> <span class="n">gv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration_step</span><span class="p">(</span><span class="n">cur_full</span><span class="p">,</span> <span class="n">pos30</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_last_n_invisible_trigger_frame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_t</span>
+</code></pre></div>
+<p>The logic above also ensures that if, for example, <code>self.inv_len = 8</code>, the calibration check is performed at most once 
+every 8 frames—even if the consecutive invisible condition continues to be met. Without this safeguard, the system 
+would naïvely re-check every subsequent frame after the 8th, leading to redundant calibration attempts.</p>
+<hr />
+<p><strong>Problem 2: false positives from background artifacts</strong></p>
+<p>Due to visibility prediction being particularly challenging, it is frequently the case in both calibration and fast 
+modes that we get a sequence of “visible shuttle head” predictions in the background or over players’ shirts. 
+In egregious cases, the false positive predictions flit across the screen at a speed impossible for real shuttle heads.</p>
+<p><strong>Solution 2A: large angular deviations</strong></p>
+<p>It was observed that these false positives do not follow a smooth trajectory and are characterized by large angles 
+between consecutive predictions. Thus, we define a configurable variable <code>self.angle_thresh</code> such that if the coordinates 
+of three consecutive visible predictions form an angle larger than <code>self.angle_thresh</code>, then we trigger a calibration 
+step.</p>
+<p><strong>Solution 2B: large positional jumps</strong></p>
+<p>Similarly, if the Euclidean distance between the last prediction and the current fast prediction exceeds <code>jump_thresh</code>, 
+we trigger a calibration step.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># engine.py</span>
+<span class="n">p3x</span><span class="p">,</span> <span class="n">p3y</span><span class="p">,</span> <span class="n">p3v</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fast_step</span><span class="p">(</span><span class="n">last_xy</span><span class="p">,</span> <span class="n">cur_full</span><span class="p">,</span> <span class="n">pos30</span><span class="p">)</span>
+<span class="n">last_two</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_two</span><span class="p">(</span><span class="n">positions_deque</span><span class="p">)</span>
+<span class="c1"># if last_two is not None:</span>
+<span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span> <span class="n">v1</span><span class="p">),</span> <span class="p">(</span><span class="n">x2</span><span class="p">,</span> <span class="n">y2</span><span class="p">,</span> <span class="n">v2</span><span class="p">)</span> <span class="o">=</span> <span class="n">last_two</span>  <span class="c1"># p1, p2</span>
+<span class="n">v1</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">v1</span><span class="p">);</span> <span class="n">v2</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">v2</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">p3v</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+    <span class="n">d2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p3x</span> <span class="o">-</span> <span class="n">x2</span><span class="p">,</span> <span class="n">p3y</span> <span class="o">-</span> <span class="n">y2</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+    <span class="c1"># trigger 3: jump too large</span>
+    <span class="n">jump</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">d2</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">jump</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jump_thresh</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">big_jump</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">gx</span><span class="p">,</span> <span class="n">gy</span><span class="p">,</span> <span class="n">gv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration_step</span><span class="p">(</span><span class="n">cur_full</span><span class="p">,</span> <span class="n">pos30</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">gx</span><span class="p">,</span> <span class="n">gy</span><span class="p">,</span> <span class="n">gv</span><span class="p">,</span> <span class="kc">True</span>
+    <span class="c1"># triggers 2 when p1 and p2 are visible, and we got a visible p3</span>
+    <span class="k">if</span> <span class="n">v1</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">d1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x2</span> <span class="o">-</span> <span class="n">x1</span><span class="p">,</span> <span class="n">y2</span> <span class="o">-</span> <span class="n">y1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+        <span class="c1"># trigger 2: angle between d1 and d2 too large</span>
+        <span class="n">ang</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_angle_between</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">ang</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">angle_thresh</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">big_angle</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">gx</span><span class="p">,</span> <span class="n">gy</span><span class="p">,</span> <span class="n">gv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calibration_step</span><span class="p">(</span><span class="n">cur_full</span><span class="p">,</span> <span class="n">pos30</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">gx</span><span class="p">,</span> <span class="n">gy</span><span class="p">,</span> <span class="n">gv</span><span class="p">,</span> <span class="kc">True</span>
+</code></pre></div>
+<hr />
+<p><strong>Problem 3: frequent calibration triggers indicate model uncertainty</strong></p>
+<p>So far, if we detect unstable behavior during a fast step, we 
+would replace the fast step prediction with one from calibration step. However, calibration step is not error-proof 
+and during inference, we have no way of knowing if the prediction returned from the calibration step is correct.</p>
+<p><strong>Solution 3: penalize frequent calibrations with triplet zeroing</strong></p>
+<p>A heuristic we use is that triggering a calibration step implies unstable inference. Thus, if we trigger 
+calibration steps frequently during a short time window, then we can be confident that some instability is plaguing 
+inference e.g. a player’s white shirt suddenly catching bright glints, giving patches that resemble shuttles. </p>
+<p>To 
+penalize triggering many calibrations within a short time window, we define a buffer <code>calib_window</code> which records the 
+number of calibrations within the last 6 frames. If at any time, that number exceeds 4, then we replace the last 6 
+triplets with (0, 0, 0) to eliminate the noisy output.</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># video_inferencer.py</span>
+<span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">calib_window</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="mi">4</span><span class="p">:</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">calib_window</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">positions_deque</span><span class="p">[</span><span class="o">-</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+        <span class="n">f</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">out_window</span><span class="p">[</span><span class="o">-</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="n">out_window</span><span class="p">[</span><span class="o">-</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">gx</span><span class="p">,</span> <span class="n">gy</span><span class="p">,</span> <span class="n">gv</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mi">0</span>
+    <span class="n">calib_window</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+</code></pre></div>
+<hr />
+<p>One might say that these artificial safeguards are a sign of weak models; in the case of visibility prediction, that is 
+admittedly true. However, setting aside the visibility issue, the safeguards simply inform the pipeline what we know 
+about shuttle physics. </p>
+<p>Moreover, when a human is annotating the frames in the first place, they are implicitly applying these checks e.g. 
+“this blob really looks like a shuttle, but it’s miles away from where I last confidently predicted the shuttle head, 
+so it’s probably just background noise”.</p>
+<p>In practice, smart mode averages at 86 FPS and is much more stable than fast mode, making it the recommended mode of 
+inference.</p>
+<hr />
+<p><br></p>
+<h1 id="4-model-development-log">4. Model Development Log<a class="headerlink" href="#4-model-development-log" title="Permanent link">&para;</a></h1>
+<p>In this section, we summarize of the motivations, implementations and problems for each of the 11 versioned 
+models. Conceptually, we can treat each model as a jigsaw puzzle to slot into the inference pipeline, as models 
+for the same stage share the same input and output signatures.</p>
+<hr />
+<h2 id="stage-1-version-table-optional-reading">Stage-1 version table (optional reading)<a class="headerlink" href="#stage-1-version-table-optional-reading" title="Permanent link">&para;</a></h2>
+<details>
+    <summary>Click to expand</summary>
+
+
+| Version + Implementation order | Significant changes made                                                                                                                                                                                                                                                                                                                                                                                              | Improvements | Problems |
+|-------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------|----------|
+| 1, 1                          | - Runs an MLP on a vector [backbone_GAPs, trajectory_vector] for prediction.<br>- Uses an MLP-based attention mechanism to assign a weight to each past frame.<br>- Uses a sequence of 1D convolutions to encode 30 past triplets into a trajectory vector.<br>- Uses EfficientNet B3 as backbone.<br>- L2 distance loss function with a margin parameter to prevent overfitting. | N/A | - Overfit to the dataset, poor performance with unseen footage.<br>- Slow learning during training. |
+| 2, 2                          | - Changed prediction MLP structure from stage 1.                                                                                                                                                                                                                                                                                                                                                                      | - Slightly faster learning | - Same as version 1 |
+| 3, 3                          | - Instead of outputting one prediction, version 3 outputs three.<br>- Implemented a `diversity_loss` function which penalized three outputs for being too close to each other. This encouraged the model to make three far apart predictions such that at least one is very good.                                                                                                                                     | - None, the three predictions always formed dense clusters. However, this led to the elegant solution of using the vertices of an equilateral triangle as points to zoom in on. | - Essentially reproduced the results of version 2, but 3 times. |
+| 4, 11                         | - First stage-1 adoption of the heatmap paradigm instead of the global average pooling (GAP) → MLP approach used before.<br>- Instead of using 30 past triplets, version 4 uses only the last one.<br>- Uses EfficientNetV2 B3 as backbone.<br>- Uses layers of backbone → BiFPN → heatmap logit approach.                                                                                                            | - Extremely fast learning rate. Achieved the same training loss as version 2 (110 epochs) in just 25 epochs.<br>- Much better performance on unseen footage.<br>- Faster inference due to EfficientNetV2 being more GPU-optimal. | - Struggles to adapt to footage taken from angles not encountered in training. |
+
+</details>
+
+<h2 id="stage-2-version-table-optional-reading">Stage-2 version table (optional reading)<a class="headerlink" href="#stage-2-version-table-optional-reading" title="Permanent link">&para;</a></h2>
+<details>
+    <summary>Click to expend</summary>
+
+| Version + Implementation order | Significant changes made | Improvements | Problems                                                                                                                                                                                     |
+|--------------------------------|--------------------------|--------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1, 4 | - Runs an MLP on a vector [backbone_GAPs, trajectory_vector] for prediction.<br>- Uses an MLP-based attention mechanism to assign a weight to each past frame.<br>- Uses a sequence of 1D convolutions to encode 30 past triplets into a trajectory vector.<br>- Uses EfficientNet B0 as backbone.<br>- L2 distance with a margin parameter and MSE loss functions for xy and visibility predictions respectively.<br>- Differential learning rates for the backbone and everything else. | N/A | - Slow learning rate. After 100 epochs, the training distance loss was at 0.02 with respect to the crop.<br>- Validation losses stayed near 0.10, five times higher than the training losses. |
+| 2, 5 | - Instead of taking 30 past triplets and using 1D convolutions to encode into a trajectory vector, we use only 6 and pass them in raw form with 5 deltas in between.| - None observed. In particular, validation losses remained high. | - Same as version 1                                                                                                                                                                          |
+| 3, 6 | - Instead of having a single MLP run on the [backbone_GAPs, trajectory_vector] to produce (x_pred, y_pred, visibility_pred), we truncate the MLP in the middle, and apply two prediction heads; one for (x_pred, y_pred) and the other for visibility_pred. <br>- I was recommended by ChatGPT to exclude bias terms and normalization parameters from weight decay in order for validation losses to drop. | - Frustratingly, none observed. Validation losses remained high.| - Same as versions 1 and 2                                                                                                                                                                   |
+| 4, 7 | - The first adoption of the heatmap paradigm for any version instead of the GAP → MLP approach used before.<br>- Used stage 5 of the backbone architecture with shape [112, 14, 14] and stage 9 with shape [1280, 7, 7] in a single FPN run.<br>- Implemented the interpolation physics model in its full form.<br>- Implemented a FiLM (feature-wise linear modulation) from the 6 past triplets and 5 deltas to apply an affine transformation uniformly on all intermediate heatmap logits.<br>- Implemented a linear visibility predictor based on the mean and max of the heatmap logits. | - Training losses (distance + visibility) dropped below 0.02 with respect to the crop in 20 epochs and stabilized at 0.011 after 100 epochs.<br>- Thus, we know that the heatmap paradigm will at least give asymptotically better predictions. | - Validation losses stayed near 0.20; even higher than the previous stages due to the paradigm shift from MLP to heatmap.                                                                    |
+| 5, 8 | - Technically, nothing changed regarding the model, as the key change was at the dataset stage where I changed the way Gaussian noise was applied to the crops.<br>- Instead of applying 0.01 * random noise in the shape of the crop and adding it on, I added a random scalar taken uniformly from 0–0.02 * random noise in the same shape. | - Immediately, the validation losses began to agree with the training losses.<br>- After 260 epochs, the combined training and validation losses stabilized at 0.0069 and 0.0081 respectively. | - Visibility prediction was observed to be poor with unseen footage.                                                                                                                         |
+| 6, 9 | - Used EfficientNetv2 B0 as backbone.<br>- Used 4 iterations of BiFPN on 4 stages of the backbone architecture, in contrast to 1 iteration before on only 2 stages.<br>- Removed the interpolation physics model and FiLM as I only wanted to use version 6 as a proof of concept for BiFPN.<br>- Removed visibility prediction entirely as I only wanted to use version 6 as a support model for version 4/5, which doesn’t need a visibility predictor.<br>- Applied crop normalization as is recommended for EfficientNetv2 models by ChatGPT. | - Surprisingly none. | - Training losses and validation losses never went below 0.013.<br>- Much slower learning rate than I expected, especially compared to stage-1 version 4.                                    |
+| 7, 10 | - Added the interpolation physics model back in. | - In 100 epochs, the validation losses stabilized at 0.011. | - In terms of distance loss, version 7 is still quite far off versions 4/5.                                                                                                                  |
+
+</details>
+
+<hr />
+<h2 id="particularly-important-versions">Particularly important versions<a class="headerlink" href="#particularly-important-versions" title="Permanent link">&para;</a></h2>
+<h3 id="stage-1-v1">Stage-1 v1<a class="headerlink" href="#stage-1-v1" title="Permanent link">&para;</a></h3>
+<p><strong>Model summary</strong></p>
+<p>This is the first model I designed for the project. Having finished a much simpler regression project before with an 
+MLP head, I thought feeding a vector into another MLP was a sound strategy. For this approach to work, we need a 
+feature extractor, which in this case is the last stage of the EfficientNet B3 architecture which applies GAP to 
+produce a tensor of shape [1536, 1, 1].</p>
+<ol>
+<li>We pass the downsampled current frame into the feature extractor and squeeze the last two dimensions to get a vector 
+of dimension 1536. </li>
+<li>We do the same to the downsampled past frames and 
+apply a simple attention mechanism to get another vector of dimension 1536. </li>
+<li>Lastly, we use a sequence of 1D 
+convolutions on the 30 past triplets to produce a vector of dimension 64. </li>
+<li>Fused together, we have a vector of dimension 
+3136, which we pass to an MLP of 4 layers to produce (x_rough, y_rough).</li>
+</ol>
+<p><strong>Why the model failed</strong></p>
+<p>In one word: GAP. We use Figure 6 to illustrate why GAP is so detrimental to high-precision point estimation tasks.</p>
+<figure style="text-align: center;">
+  <img src="Figures/GAP.png" alt="GAP" style="width:80%; height:auto;">
+  <figcaption>Figure 6: Effects of GAP</figcaption>
+</figure>
+
+<p>Suppose we pass an image to a CNN. Before the final GAP operation, the image is typically represented as a feature map 
+of rank 3 (conceptually a cuboid where you need three indices to access any entry). </p>
+<p>The width and height of the feature 
+map split the image into a grid, while the depth represents how many features you store for each square in the grid. 
+In the Figure 6, we split the image into a 6x6 grid, and store 3 features for each of the 36 squares in that grid. </p>
+<p>What we have in a feature map of rank 3 is rich spatial information; the depth tells you what kind of feature exists while 
+the width and height tell you where you can find that feature.</p>
+<p>GAP averages the 36 features in each sheet and collapses the feature map rich with spatial information into one which 
+effectively has rank 1 (a vector). </p>
+<p>The new feature map only tells you roughly what exists in the image, with no information 
+regarding where. Clearly, feeding any MLP with this new feature map for point-estimation is a bad idea as the MLP 
+cannot reconstruct spatial information from an average, leading to the severe overfitting and slow learning rate we 
+observed.</p>
+<hr />
+<h3 id="stage-1-v4">Stage-1 v4<a class="headerlink" href="#stage-1-v4" title="Permanent link">&para;</a></h3>
+<p><strong>Model summary</strong></p>
+<p>Having seen the effectiveness of FPN/BiFPN → heatmap approaches in the later stage-2 versions, I kept the design of 
+stage-1 version 4 extremely simple. </p>
+<p>We take 4 stages from the EfficientNetv2 B3 architecture, with the earlier stages 
+capturing low-level features such as lines and the later stages capturing high-level semantic features such as feathers. </p>
+<p>We fuse 
+these stages and apply a sequence 
+of 1x1 and 3x3 convolutions to get a heatmap with shape [75, 75, 1]. We then add small peak where the 
+xy-coordinates of the last triplet were, make the resulting heatmap a probability distribution, take a mean over the distribution, and that’s 
+it.</p>
+<p>Conceptually, stage-1 version 4 is very vanilla; it doesn’t need more complexity as stage 1 only needs to produce a 
+rough prediction within 0.06 normalized units away from the ground truth.</p>
+<hr />
+<h3 id="stage-2-v4-v5">Stage-2 v4 + v5<a class="headerlink" href="#stage-2-v4-v5" title="Permanent link">&para;</a></h3>
+<p><strong>Model summary</strong></p>
+<p>This is the first model that uses the heatmap approach for prediction. Versions 4 and 5 in the <a href="#stage-2-version-table-optional-reading">Stage-2 version table</a> offer a satisfactory 
+summary of the model; for a deeper dive, I would recommend reading stage2_model_v4.py. I think there is more
+nuance in exploring how the validation losses dropped in version 5 with a one-liner change.</p>
+<p><strong>How did the validation losses drop?</strong></p>
+<p>For a whole week, the validation losses across four different stage-2 versions could not drop below 0.10 while the 
+training losses could reliably hit 0.012. This evidently led to much frustration, from which I conducted a sequence of 
+debugs on the dataset, dataloader, models and even training procedures; to no avail.</p>
+<p>As a last resort, I ran a series 
+of tests to see the impacts of different combinations of data augmentation techniques on the losses incurred. 
+Figure 7 shows the raw results obtained.</p>
+<figure style="text-align: center;">
+  <img src="Figures/raw_test_data.jpeg" alt="raw test data" style="width:80%; height:auto;">
+  <figcaption>Figure 7: Raw data showing the impact of augmentation techniques on validation losses</figcaption>
+</figure>
+
+<p>We collate this data into the following table:</p>
+<table>
+<thead>
+<tr>
+<th>Test no.</th>
+<th>Data split</th>
+<th>Color jitter applied</th>
+<th>Gaussian noise</th>
+<th>Horizontal flip applied</th>
+<th>Average loss</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Training</td>
+<td>False</td>
+<td>0.00</td>
+<td>False</td>
+<td>0.1651</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Training</td>
+<td>True</td>
+<td>0.01</td>
+<td>True</td>
+<td>0.0089</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Validation</td>
+<td>False</td>
+<td>0.01</td>
+<td>True</td>
+<td>0.0108</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Testing</td>
+<td>True</td>
+<td>0.01</td>
+<td>True</td>
+<td>0.0081</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Validation</td>
+<td>False</td>
+<td>0.01</td>
+<td>False</td>
+<td>0.0108</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Validation</td>
+<td>True</td>
+<td>0.00</td>
+<td>True</td>
+<td>0.2017</td>
+</tr>
+</tbody>
+</table>
+<p>We can clearly see the average losses clustering around two values; 0.01 and 0.20. We also see that there is a perfect 
+correlation between applying Gaussian noise and incurring an abnormally high validation loss. Before stage-2 version 5, 
+we would apply Gaussian noise to a crop or frame the following way:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># dataset.py</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">apply_noise</span><span class="p">(</span><span class="n">frames</span><span class="p">,</span> <span class="n">noise_std</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply different Gaussian noise per frame.</span>
+<span class="sd">    Takes in a list of images and returns a list of tensors.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">noisy_frames</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">img</span> <span class="ow">in</span> <span class="n">frames</span><span class="p">:</span>
+        <span class="n">img_tensor</span> <span class="o">=</span> <span class="n">transforms</span><span class="o">.</span><span class="n">ToTensor</span><span class="p">()(</span><span class="n">img</span><span class="p">)</span>
+        <span class="c1"># noise_std = np.random.uniform(low=0, high=noise_std) # from version 5 onwards</span>
+        <span class="n">noise</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">randn_like</span><span class="p">(</span><span class="n">img_tensor</span><span class="p">)</span> <span class="o">*</span> <span class="n">noise_std</span> <span class="c1"># noise_std is a constant</span>
+        <span class="n">img_tensor</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">clamp</span><span class="p">(</span><span class="n">img_tensor</span> <span class="o">+</span> <span class="n">noise</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">noisy_frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img_tensor</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">noisy_frames</span>
+</code></pre></div>
+<p>We employ an analogy to explain why training with a constant noise_std and then performing inference without it 
+(data augmentation is not used in inference) is problematic. </p>
+<p>Imagine the model as a racehorse and the training images as its racetrack. During training, every track the horse runs 
+on is covered with rainwater; sometimes shallow, sometimes deeper, but averaging 0.01 meters in depth. Over hundreds of 
+training sessions (epochs), the horse becomes highly specialized for these tracks: adjusting its gait and optimizing for traction on wet ground.</p>
+<p>On race day, the horse is released onto a perfectly dry concrete track. Though still fast, the horse's 
+fine-tuned instincts don't fit well to the new environment. It underperforms due to a 
+shift in conditions it was never trained for.</p>
+<p>Leaving the story behind, we can uncomment out the following line, which effectively trains our racehorse in all 
+conditions so that it is not "surprised" by any.</p>
+<div class="highlight"><pre><span></span><code><span class="n">noise_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">noise_std</span><span class="p">)</span> <span class="c1"># from version 5 onwards</span>
+</code></pre></div>
+<hr />
+<p><br></p>
+<h1 id="5-results">5. Results<a class="headerlink" href="#5-results" title="Permanent link">&para;</a></h1>
+<h2 id="quantitative-results">Quantitative results<a class="headerlink" href="#quantitative-results" title="Permanent link">&para;</a></h2>
+<ul>
+<li>On average, our stage-1 v4 model can pinpoint the shuttle head’s position to within 0.01 normalized units of the 
+  ground truth. To put that in perspective, if each frame were divided into a 50×50 grid, the model would correctly 
+  identify the square containing the shuttle head, assuming it’s visible.</li>
+<li>The stage-2 v4 model, specifically the main model in our voting ensemble, refines this even further. It achieves an 
+  average positional error of just 0.0081 normalized units relative to its 224×224 input crop. When mapped back to 
+  the full 1920×1080 frame, this corresponds to a deviation of only 0.00168 units.</li>
+</ul>
+<p>While these results reflect training performance, we expect slightly higher deviations for unseen footage. Also, we 
+omit discussing visibility losses from stage 2 as the visibility predictor is very unstable and queued for immediate 
+update; it would be dishonest to praise its low training losses (suspected overfitting) when this doesn’t transfer to 
+inference.</p>
+<hr />
+<h2 id="qualitative-results">Qualitative results<a class="headerlink" href="#qualitative-results" title="Permanent link">&para;</a></h2>
+<p>We show 5 snippets of unseen footage labeled by our system. Click below to play.</p>
+<p><a href="https://billthetsar.github.io/Shuttle-Detection/"><img alt="Watch the video" src="https://raw.githubusercontent.com/BillTheTsar/Shuttle-Detection/main/labeled_videos/thumbnails/1.jpg" /></a></p>
+<hr />
+<h2 id="limitations">Limitations<a class="headerlink" href="#limitations" title="Permanent link">&para;</a></h2>
+<p>Below we list the main limitations of the inference pipeline with what I believe to be good solutions.</p>
+<p><strong>Limitation 1:</strong> the inference pipeline only performs well when the camera is positioned close to behind the center of the court, from where the net should be almost perfectly rectangular. Performance is particularly bad if the camera is placed near corners of the court.</p>
+<p><strong>Solution to limitation 1:</strong> all game footage the model trained on was taken from a point close to behind the center of the court. Thus, we need to enlarge our dataset by including footage taken from a variety of angles. This should not only reduce the impact of limitation 1, but also make our models more robustly sensitive to “shuttle shapes” in general.</p>
+<hr />
+<p><strong>Limitation 2:</strong> as mentioned multiple times, the visibility predictor in the stage-2 v4 model is not effective. So far, it is a affine function involving the mean and max values of the heatmap. However, the logits of the heatmap are not normalized, leading to drastically different mean and max values from similar crops.</p>
+<p><strong>Solution to limitation 2:</strong> firstly, normalize the heatmap logits to lie within [0, 1]. Apply a sequence of 1x1 and 3x3 convolutions on the heatmaps produced by both the main and support stage-2 models to produce a visibility score. A convolution-based approach was chosen because the spatial distribution of the heatmap often reveals whether the shuttle head is visible; something that is difficult to capture with affine methods alone.</p>
+<hr />
+<p><strong>Limitation 3:</strong> the inference pipeline is highly sensitive to video scale. One can infer from the snippets of unseen footage what scale range the models perform reliably in.</p>
+<p><strong>Solution to limitation 3:</strong> as with limitation 1, the models were trained on footage at more or less the same video scale. While it might seem reasonable to include samples at multiple scales to improve generalization, I would not recommend incorporating smaller scales; at such resolutions, shuttle heads become featureless blobs, making learning and detection meaningless. Instead, it is recommended to record at a similar scale (and thus distance from the court) to that shown in the snippets.</p>
+<hr />
+<p><strong>Limitation 4:</strong> the inference pipeline fails entirely on low-quality footage. Common symptoms include frequent dropped frames (surprisingly common from equipment that claims to be 60 FPS but can’t actually achieve it), poor interpolation methods that cause the shuttle head to vanish intermittently, and constant refocusing that disrupts visual consistency. </p>
+<p><strong>Solution 4:</strong> none. It is unrealistic to expect an inference pipeline with CNN backbones to adapt to impossible image data. Instead, use recording equipment that reliably produces high-quality footage.</p>
+<hr />
+<h2 id="reflections">Reflections<a class="headerlink" href="#reflections" title="Permanent link">&para;</a></h2>
+<p>Below, we list the major lessons learnt.</p>
+<ol>
+<li>Before designing a model for a task, I should conduct more research into existing methods. It would have saved weeks of model development had I learnt about the BiFPN → heatmap method.</li>
+<li>Before building the dataset, it's crucial to define the target scenarios for model deployment and ensure the data adequately represents each of them.</li>
+</ol>
+<hr />
+<h2 id="work-under-progress">Work under progress<a class="headerlink" href="#work-under-progress" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Develop a separate visibility head as described in <a href="#limitations">Limitations</a>.</li>
+<li>Enlarge the dataset to improve performance on wider camera angles and on frames during shuttle impact.</li>
+<li>Deploy the models on Hugging Face Space (or similar platform) to enable drag-and-drop video inference for users.</li>
+</ol>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.sections", "toc.integrate", "content.code.annotate"], "search": "../assets/javascripts/workers/search.973d3a69.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.f55a23d4.min.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>
