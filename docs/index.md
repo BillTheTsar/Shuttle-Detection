@@ -1,7 +1,6 @@
-# Predicting Shuttle Landing Positions from Video Frames
-*A machine learning project by Bill Zhang*
+<p style="font-size: 2.0em; font-weight: bold; margin-bottom: 0;">Badminton Shuttle Head Tracking from Video</p>
 
----
+*A machine learning project by Bill Zhang*
 
 ## Abstract
 
@@ -15,7 +14,7 @@
 
 # 1. Introduction
 
-## Problem statement
+### Problem statement
 
 **Given a video of a badminton game, identify the precise position of the badminton shuttle head in all frames in which it is present and in play.** 
 
