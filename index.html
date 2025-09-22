@@ -3,19 +3,102 @@
 <head>
   <meta charset="UTF-8">
   <title>Shuttle Detection Videos</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f9fa;
+      margin: 0;
+      padding: 20px;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      color: #222;
+      margin-bottom: 10px;
+    }
+    p.description {
+      text-align: center;
+      max-width: 700px;
+      margin: 0 auto 40px;
+      color: #555;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    .card {
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      overflow: hidden;
+      text-align: center;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    .card img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .card a {
+      display: block;
+      padding: 12px;
+      text-decoration: none;
+      color: #0077cc;
+      font-weight: bold;
+      background: #f1f1f1;
+      border-top: 1px solid #ddd;
+    }
+    .card a:hover {
+      background: #e9ecef;
+      color: #0056a3;
+    }
+  </style>
 </head>
 <body>
-  <h1>Video Demo</h1>
+  <h1>Shuttle Detection Videos</h1>
+  <p class="description">
+    Below are 5 unseen snippets labeled by our inference pipeline.
+    Click a thumbnail to watch the corresponding video.
+  </p>
 
-  <p>Thumbnail + link:</p>
-  <a href="labeled_videos/1.mp4">
-    <img src="labeled_videos/thumbnails/1.jpg" width="300" alt="Thumbnail">
-  </a>
-
-  <p>Inline player:</p>
-  <video width="480" controls>
-    <source src="labeled_videos/1.mp4" type="video/mp4">
-    Your browser does not support video playback.
-  </video>
+  <div class="gallery">
+    <div class="card">
+      <a href="labeled_videos/1.mp4">
+        <img src="labeled_videos/thumbnails/1.jpg" alt="Snippet 1 thumbnail">
+        Watch Snippet 1
+      </a>
+    </div>
+    <div class="card">
+      <a href="labeled_videos/2.mp4">
+        <img src="labeled_videos/thumbnails/2.jpg" alt="Snippet 2 thumbnail">
+        Watch Snippet 2
+      </a>
+    </div>
+    <div class="card">
+      <a href="labeled_videos/3.mp4">
+        <img src="labeled_videos/thumbnails/3.jpg" alt="Snippet 3 thumbnail">
+        Watch Snippet 3
+      </a>
+    </div>
+    <div class="card">
+      <a href="labeled_videos/4.mp4">
+        <img src="labeled_videos/thumbnails/4.jpg" alt="Snippet 4 thumbnail">
+        Watch Snippet 4
+      </a>
+    </div>
+    <div class="card">
+      <a href="labeled_videos/5.mp4">
+        <img src="labeled_videos/thumbnails/5.jpg" alt="Snippet 5 thumbnail">
+        Watch Snippet 5
+      </a>
+    </div>
+  </div>
 </body>
 </html>

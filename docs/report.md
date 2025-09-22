@@ -809,17 +809,9 @@ inference.
 ---
 
 ## Qualitative results
-We show 5 snippets of unseen footage labeled by our inference pipeline:
+We show 5 snippets of unseen footage labeled by our system. Click below to play.
 
-[![Watch the video](https://raw.githubusercontent.com/BillTheTsar/Shuttle-Detection/main/labeled_videos/thumbnails/1.jpg)](https://github.com/BillTheTsar/Shuttle-Detection/blob/main/labeled_videos/1.mp4?raw=true)
-
-[![Watch the video](Figures/something.png)](https://www.youtube.com/watch?v=XXXXXXXX)
-
-[![Watch the video](Figures/something.png)](https://www.youtube.com/watch?v=XXXXXXXX)
-
-[![Watch the video](Figures/something.png)](https://www.youtube.com/watch?v=XXXXXXXX)
-
-[![Watch the video](Figures/something.png)](https://www.youtube.com/watch?v=XXXXXXXX)
+[![Watch the video](https://raw.githubusercontent.com/BillTheTsar/Shuttle-Detection/main/labeled_videos/thumbnails/1.jpg)](https://billthetsar.github.io/Shuttle-Detection/)
 
 ---
 
