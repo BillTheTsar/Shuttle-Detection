@@ -11,7 +11,7 @@ theme:
     - toc.integrate
     - content.code.annotate
 extra:
-  homepage: index_mkdocs.md
+  homepage: index_mkdocs/
 
 # Pretty URLs are on by default; keep them
 use_directory_urls: true

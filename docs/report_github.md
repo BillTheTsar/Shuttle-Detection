@@ -816,7 +816,7 @@ inference.
 ## Qualitative results
 We show 5 snippets of unseen footage labeled by our system. Click below to be directed to the gallery.
 
-[![Watch the video](labeled_videos/thumbnails/1.jpg)](videos.md)
+[![Watch the video](https://raw.githubusercontent.com/BillTheTsar/Shuttle-Detection/main/labeled_videos/thumbnails/1.jpg)](videos.md)
 
 ---
 
