@@ -10,14 +10,12 @@ theme:
     - navigation.sections
     - toc.integrate
     - content.code.annotate
-extra:
-  homepage: index_mkdocs/
 
 # Pretty URLs are on by default; keep them
 use_directory_urls: true
 
 nav:
-  - Home: index_mkdocs.md                 # put your intro/abstract here
+  - Home: index.md                 # put your intro/abstract here
   - Project Overview: project_overview_mkdocs.md
   - Technical Design: technical_design_mkdocs.md
   - Model Log: model_development_log_mkdocs.md
