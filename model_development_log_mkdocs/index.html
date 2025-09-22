@@ -338,24 +338,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#stage-1-version-table-optional-reading" class="md-nav__link">
-    <span class="md-ellipsis">
-      Stage-1 version table (optional reading)
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#stage-2-version-table-optional-reading" class="md-nav__link">
-    <span class="md-ellipsis">
-      Stage-2 version table (optional reading)
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#particularly-important-versions" class="md-nav__link">
     <span class="md-ellipsis">
       Particularly important versions
@@ -473,36 +455,104 @@
 models. Conceptually, we can treat each model as a jigsaw puzzle to slot into the inference pipeline, as models 
 for the same stage share the same input and output signatures.</p>
 <hr />
-<h2 id="stage-1-version-table-optional-reading">Stage-1 version table (optional reading)<a class="headerlink" href="#stage-1-version-table-optional-reading" title="Permanent link">&para;</a></h2>
-<details>
-    <summary>Click to expand</summary>
-
-
-| Version + Implementation order | Significant changes made                                                                                                                                                                                                                                                                                                                                                                                              | Improvements | Problems |
-|-------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------|----------|
-| 1, 1                          | - Runs an MLP on a vector [backbone_GAPs, trajectory_vector] for prediction.<br>- Uses an MLP-based attention mechanism to assign a weight to each past frame.<br>- Uses a sequence of 1D convolutions to encode 30 past triplets into a trajectory vector.<br>- Uses EfficientNet B3 as backbone.<br>- L2 distance loss function with a margin parameter to prevent overfitting. | N/A | - Overfit to the dataset, poor performance with unseen footage.<br>- Slow learning during training. |
-| 2, 2                          | - Changed prediction MLP structure from stage 1.                                                                                                                                                                                                                                                                                                                                                                      | - Slightly faster learning | - Same as version 1 |
-| 3, 3                          | - Instead of outputting one prediction, version 3 outputs three.<br>- Implemented a `diversity_loss` function which penalized three outputs for being too close to each other. This encouraged the model to make three far apart predictions such that at least one is very good.                                                                                                                                     | - None, the three predictions always formed dense clusters. However, this led to the elegant solution of using the vertices of an equilateral triangle as points to zoom in on. | - Essentially reproduced the results of version 2, but 3 times. |
-| 4, 11                         | - First stage-1 adoption of the heatmap paradigm instead of the global average pooling (GAP) → MLP approach used before.<br>- Instead of using 30 past triplets, version 4 uses only the last one.<br>- Uses EfficientNetV2 B3 as backbone.<br>- Uses layers of backbone → BiFPN → heatmap logit approach.                                                                                                            | - Extremely fast learning rate. Achieved the same training loss as version 2 (110 epochs) in just 25 epochs.<br>- Much better performance on unseen footage.<br>- Faster inference due to EfficientNetV2 being more GPU-optimal. | - Struggles to adapt to footage taken from angles not encountered in training. |
-
+<p><a id="stage-1-version-table-optional-reading"></a></p>
+<details class="note">
+<summary>Stage-1 version table (optional reading)</summary>
+<table>
+<thead>
+<tr>
+<th>Version + Implementation order</th>
+<th>Significant changes made</th>
+<th>Improvements</th>
+<th>Problems</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1, 1</td>
+<td>- Runs an MLP on a vector [backbone_GAPs, trajectory_vector] for prediction.<br>- Uses an MLP-based attention mechanism to assign a weight to each past frame.<br>- Uses a sequence of 1D convolutions to encode 30 past triplets into a trajectory vector.<br>- Uses EfficientNet B3 as backbone.<br>- L2 distance loss function with a margin parameter to prevent overfitting.</td>
+<td>N/A</td>
+<td>- Overfit to the dataset, poor performance with unseen footage.<br>- Slow learning during training.</td>
+</tr>
+<tr>
+<td>2, 2</td>
+<td>- Changed prediction MLP structure from stage 1.</td>
+<td>- Slightly faster learning</td>
+<td>- Same as version 1</td>
+</tr>
+<tr>
+<td>3, 3</td>
+<td>- Instead of outputting one prediction, version 3 outputs three.<br>- Implemented a <code>diversity_loss</code> function which penalized three outputs for being too close to each other. This encouraged the model to make three far apart predictions such that at least one is very good.</td>
+<td>- None, the three predictions always formed dense clusters. However, this led to the elegant solution of using the vertices of an equilateral triangle as points to zoom in on.</td>
+<td>- Essentially reproduced the results of version 2, but 3 times.</td>
+</tr>
+<tr>
+<td>4, 11</td>
+<td>- First stage-1 adoption of the heatmap paradigm instead of the global average pooling (GAP) → MLP approach used before.<br>- Instead of using 30 past triplets, version 4 uses only the last one.<br>- Uses EfficientNetV2 B3 as backbone.<br>- Uses layers of backbone → BiFPN → heatmap logit approach.</td>
+<td>- Extremely fast learning rate. Achieved the same training loss as version 2 (110 epochs) in just 25 epochs.<br>- Much better performance on unseen footage.<br>- Faster inference due to EfficientNetV2 being more GPU-optimal.</td>
+<td>- Struggles to adapt to footage taken from angles not encountered in training.</td>
+</tr>
+</tbody>
+</table>
 </details>
-
-<h2 id="stage-2-version-table-optional-reading">Stage-2 version table (optional reading)<a class="headerlink" href="#stage-2-version-table-optional-reading" title="Permanent link">&para;</a></h2>
-<details>
-    <summary>Click to expend</summary>
-
-| Version + Implementation order | Significant changes made | Improvements | Problems                                                                                                                                                                                     |
-|--------------------------------|--------------------------|--------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 1, 4 | - Runs an MLP on a vector [backbone_GAPs, trajectory_vector] for prediction.<br>- Uses an MLP-based attention mechanism to assign a weight to each past frame.<br>- Uses a sequence of 1D convolutions to encode 30 past triplets into a trajectory vector.<br>- Uses EfficientNet B0 as backbone.<br>- L2 distance with a margin parameter and MSE loss functions for xy and visibility predictions respectively.<br>- Differential learning rates for the backbone and everything else. | N/A | - Slow learning rate. After 100 epochs, the training distance loss was at 0.02 with respect to the crop.<br>- Validation losses stayed near 0.10, five times higher than the training losses. |
-| 2, 5 | - Instead of taking 30 past triplets and using 1D convolutions to encode into a trajectory vector, we use only 6 and pass them in raw form with 5 deltas in between.| - None observed. In particular, validation losses remained high. | - Same as version 1                                                                                                                                                                          |
-| 3, 6 | - Instead of having a single MLP run on the [backbone_GAPs, trajectory_vector] to produce (x_pred, y_pred, visibility_pred), we truncate the MLP in the middle, and apply two prediction heads; one for (x_pred, y_pred) and the other for visibility_pred. <br>- I was recommended by ChatGPT to exclude bias terms and normalization parameters from weight decay in order for validation losses to drop. | - Frustratingly, none observed. Validation losses remained high.| - Same as versions 1 and 2                                                                                                                                                                   |
-| 4, 7 | - The first adoption of the heatmap paradigm for any version instead of the GAP → MLP approach used before.<br>- Used stage 5 of the backbone architecture with shape [112, 14, 14] and stage 9 with shape [1280, 7, 7] in a single FPN run.<br>- Implemented the interpolation physics model in its full form.<br>- Implemented a FiLM (feature-wise linear modulation) from the 6 past triplets and 5 deltas to apply an affine transformation uniformly on all intermediate heatmap logits.<br>- Implemented a linear visibility predictor based on the mean and max of the heatmap logits. | - Training losses (distance + visibility) dropped below 0.02 with respect to the crop in 20 epochs and stabilized at 0.011 after 100 epochs.<br>- Thus, we know that the heatmap paradigm will at least give asymptotically better predictions. | - Validation losses stayed near 0.20; even higher than the previous stages due to the paradigm shift from MLP to heatmap.                                                                    |
-| 5, 8 | - Technically, nothing changed regarding the model, as the key change was at the dataset stage where I changed the way Gaussian noise was applied to the crops.<br>- Instead of applying 0.01 * random noise in the shape of the crop and adding it on, I added a random scalar taken uniformly from 0–0.02 * random noise in the same shape. | - Immediately, the validation losses began to agree with the training losses.<br>- After 260 epochs, the combined training and validation losses stabilized at 0.0069 and 0.0081 respectively. | - Visibility prediction was observed to be poor with unseen footage.                                                                                                                         |
-| 6, 9 | - Used EfficientNetv2 B0 as backbone.<br>- Used 4 iterations of BiFPN on 4 stages of the backbone architecture, in contrast to 1 iteration before on only 2 stages.<br>- Removed the interpolation physics model and FiLM as I only wanted to use version 6 as a proof of concept for BiFPN.<br>- Removed visibility prediction entirely as I only wanted to use version 6 as a support model for version 4/5, which doesn’t need a visibility predictor.<br>- Applied crop normalization as is recommended for EfficientNetv2 models by ChatGPT. | - Surprisingly none. | - Training losses and validation losses never went below 0.013.<br>- Much slower learning rate than I expected, especially compared to stage-1 version 4.                                    |
-| 7, 10 | - Added the interpolation physics model back in. | - In 100 epochs, the validation losses stabilized at 0.011. | - In terms of distance loss, version 7 is still quite far off versions 4/5.                                                                                                                  |
-
+<p><a id="stage-2-version-table-optional-reading"></a></p>
+<details class="note">
+<summary>Stage-2 version table (optional reading)</summary>
+<table>
+<thead>
+<tr>
+<th>Version + Implementation order</th>
+<th>Significant changes made</th>
+<th>Improvements</th>
+<th>Problems</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1, 4</td>
+<td>- Runs an MLP on a vector [backbone_GAPs, trajectory_vector] for prediction.<br>- Uses an MLP-based attention mechanism to assign a weight to each past frame.<br>- Uses a sequence of 1D convolutions to encode 30 past triplets into a trajectory vector.<br>- Uses EfficientNet B0 as backbone.<br>- L2 distance with a margin parameter and MSE loss functions for xy and visibility predictions respectively.<br>- Differential learning rates for the backbone and everything else.</td>
+<td>N/A</td>
+<td>- Slow learning rate. After 100 epochs, the training distance loss was at 0.02 with respect to the crop.<br>- Validation losses stayed near 0.10, five times higher than the training losses.</td>
+</tr>
+<tr>
+<td>2, 5</td>
+<td>- Instead of taking 30 past triplets and using 1D convolutions to encode into a trajectory vector, we use only 6 and pass them in raw form with 5 deltas in between.</td>
+<td>- None observed. In particular, validation losses remained high.</td>
+<td>- Same as version 1</td>
+</tr>
+<tr>
+<td>3, 6</td>
+<td>- Instead of having a single MLP run on the [backbone_GAPs, trajectory_vector] to produce (x_pred, y_pred, visibility_pred), we truncate the MLP in the middle, and apply two prediction heads; one for (x_pred, y_pred) and the other for visibility_pred. <br>- I was recommended by ChatGPT to exclude bias terms and normalization parameters from weight decay in order for validation losses to drop.</td>
+<td>- Frustratingly, none observed. Validation losses remained high.</td>
+<td>- Same as versions 1 and 2</td>
+</tr>
+<tr>
+<td>4, 7</td>
+<td>- The first adoption of the heatmap paradigm for any version instead of the GAP → MLP approach used before.<br>- Used stage 5 of the backbone architecture with shape [112, 14, 14] and stage 9 with shape [1280, 7, 7] in a single FPN run.<br>- Implemented the interpolation physics model in its full form.<br>- Implemented a FiLM (feature-wise linear modulation) from the 6 past triplets and 5 deltas to apply an affine transformation uniformly on all intermediate heatmap logits.<br>- Implemented a linear visibility predictor based on the mean and max of the heatmap logits.</td>
+<td>- Training losses (distance + visibility) dropped below 0.02 with respect to the crop in 20 epochs and stabilized at 0.011 after 100 epochs.<br>- Thus, we know that the heatmap paradigm will at least give asymptotically better predictions.</td>
+<td>- Validation losses stayed near 0.20; even higher than the previous stages due to the paradigm shift from MLP to heatmap.</td>
+</tr>
+<tr>
+<td>5, 8</td>
+<td>- Technically, nothing changed regarding the model, as the key change was at the dataset stage where I changed the way Gaussian noise was applied to the crops.<br>- Instead of applying 0.01 * random noise in the shape of the crop and adding it on, I added a random scalar taken uniformly from 0–0.02 * random noise in the same shape.</td>
+<td>- Immediately, the validation losses began to agree with the training losses.<br>- After 260 epochs, the combined training and validation losses stabilized at 0.0069 and 0.0081 respectively.</td>
+<td>- Visibility prediction was observed to be poor with unseen footage.</td>
+</tr>
+<tr>
+<td>6, 9</td>
+<td>- Used EfficientNetv2 B0 as backbone.<br>- Used 4 iterations of BiFPN on 4 stages of the backbone architecture, in contrast to 1 iteration before on only 2 stages.<br>- Removed the interpolation physics model and FiLM as I only wanted to use version 6 as a proof of concept for BiFPN.<br>- Removed visibility prediction entirely as I only wanted to use version 6 as a support model for version 4/5, which doesn’t need a visibility predictor.<br>- Applied crop normalization as is recommended for EfficientNetv2 models by ChatGPT.</td>
+<td>- Surprisingly none.</td>
+<td>- Training losses and validation losses never went below 0.013.<br>- Much slower learning rate than I expected, especially compared to stage-1 version 4.</td>
+</tr>
+<tr>
+<td>7, 10</td>
+<td>- Added the interpolation physics model back in.</td>
+<td>- In 100 epochs, the validation losses stabilized at 0.011.</td>
+<td>- In terms of distance loss, version 7 is still quite far off versions 4/5.</td>
+</tr>
+</tbody>
+</table>
 </details>
-
 <hr />
 <h2 id="particularly-important-versions">Particularly important versions<a class="headerlink" href="#particularly-important-versions" title="Permanent link">&para;</a></h2>
 <h3 id="stage-1-v1">Stage-1 v1<a class="headerlink" href="#stage-1-v1" title="Permanent link">&para;</a></h3>
@@ -559,13 +609,13 @@ rough prediction within 0.06 normalized units away from the ground truth.</p>
 <h3 id="stage-2-v4-v5">Stage-2 v4 + v5<a class="headerlink" href="#stage-2-v4-v5" title="Permanent link">&para;</a></h3>
 <p><strong>Model summary</strong></p>
 <p>This is the first model that uses the heatmap approach for prediction. Versions 4 and 5 in the <a href="#stage-2-version-table-optional-reading">Stage-2 version table</a> offer a satisfactory 
-summary of the model; for a deeper dive, I would recommend reading stage2_model_v4.py. I think there is more
+summary of the model; for a deeper dive, I would recommend reading <a href="https://github.com/BillTheTsar/Shuttle-Detection/blob/main/scripts/stage2_v4/stage2_model_v4.py">stage2_model_v4.py</a>. I think there is more
 nuance in exploring how the validation losses dropped in version 5 with a one-liner change.</p>
 <p><strong>How did the validation losses drop?</strong></p>
 <p>For a whole week, the validation losses across four different stage-2 versions could not drop below 0.10 while the 
 training losses could reliably hit 0.012. This evidently led to much frustration, from which I conducted a sequence of 
 debugs on the dataset, dataloader, models and even training procedures; to no avail.</p>
-<p>As a last resort, I ran a series 
+<p>As last resort, I ran a series 
 of tests to see the impacts of different combinations of data augmentation techniques on the losses incurred. 
 Figure 7 shows the raw results obtained.</p>
 <figure>
@@ -654,7 +704,7 @@ we would apply Gaussian noise to a crop or frame the following way:</p>
         <span class="n">noisy_frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img_tensor</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">noisy_frames</span>
 </code></pre></div>
-<p>We employ an analogy to explain why training with a constant noise_std and then performing inference without it 
+<p>We employ an analogy to explain why training with a constant <code>noise_std</code> and then performing inference without it 
 (data augmentation is not used in inference) is problematic. </p>
 <p>Imagine the model as a racehorse and the training images as its racetrack. During training, every track the horse runs 
 on is covered with rainwater; sometimes shallow, sometimes deeper, but averaging 0.01 meters in depth. Over hundreds of 
@@ -666,6 +716,7 @@ shift in conditions it was never trained for.</p>
 conditions so that it is not "surprised" by any.</p>
 <div class="highlight"><pre><span></span><code><span class="n">noise_std</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="n">noise_std</span><span class="p">)</span> <span class="c1"># from version 5 onwards</span>
 </code></pre></div>
+<p>Within the first epoch of training, we see validation losses drop to 0.03; a bottleneck solved by one line.</p>
 <p><br><br></p>
 
 
