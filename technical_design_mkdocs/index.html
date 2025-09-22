@@ -722,7 +722,7 @@ serves more as a benchmark than a practical inference method.</p>
 <h3 id="fast-mode">Fast mode<a class="headerlink" href="#fast-mode" title="Permanent link">&para;</a></h3>
 <p>Runs a calibration step once every <code>self.fast_calib_interval</code> frames (configurable). Every other frame is processed with 
 fast steps. This mode is more stable and much faster than calibration mode.</p>
-<details class="note">
+<details class="note" open="open">
 <summary>Implementation</summary>
 <div class="highlight"><pre><span></span><code><span class="c1"># engine.py</span>
 <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;fast&quot;</span><span class="p">:</span>
