@@ -10,7 +10,7 @@ Once improved with a larger dataset, the project will become the foundation for 
 # Project Overview
 >[Click here](https://billthetsar.github.io/Shuttle-Detection/videos/) to look at 5 unseen video
 snippets labeled by the system.
-
+>
 >In the [Project Report](https://billthetsar.github.io/Shuttle-Detection/), we explain the objectives, challenges 
 overcome and insights gained from multiple model redesigns. It covers everything below and much more!
 
@@ -54,9 +54,11 @@ Now we've installed the necessary packages, we can label our videos with shuttle
 
 1. Using your favorite CLI, navigate to the project root directory.
 
-2. To get the csv, refer to the help message below and run 
-`python scripts/video_inferencer.py --video_path path/to/input.mp4 --csv_path path/to/output.csv`. By default, device="cuda" 
-and mode="smart".
+2. To get the csv, run 
+`python scripts/video_inferencer.py --video_path path/to/input.mp4 --csv_path path/to/output.csv`.
+
+<details>
+<summary>video_inferencer.py --help</summary>
 
 ```bash
 PS D:\Shuttle Detection Model> python scripts/video_inferencer.py --help
@@ -73,9 +75,15 @@ options:
                         Inference mode: 'calib' - calibration mode, usually slower but useful for debugging; 'fast' -
                         prioritize speed over accuracy; 'smart' - balanced mode (recommended).
 ```
+By default, device="cuda" and mode="smart".
 
-3. To annotate the video with the csv labels, refer to the help message below and run `python scripts/video_labeler.py 
+</details>
+
+3. To annotate the video with the csv labels, run `python scripts/video_labeler.py 
 --video path/to/input.mp4 --csv path/to/output.csv --out path/to/annotated.mp4`.
+
+<details>
+<summary>video_labeler.py --help</summary>
 
 ```bash
 PS D:\Shuttle Detection Model> python scripts/video_labeler.py --help
@@ -89,3 +97,7 @@ options:
   --csv CSV      Path to CSV file with predictions (columns: frame, x, y, vis).
   --out OUT      Path to save annotated video.
 ```
+
+</details>
+
+<br><br>
