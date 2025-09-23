@@ -192,13 +192,44 @@ def main(video_path: str, out_csv: str, device="cuda", mode="smart"):
 
 
 if __name__ == "__main__":
-    ap = argparse.ArgumentParser()
-    ap.add_argument("--video", type=str,
-                    default="E:/AI/Badminton Landing Project/Playing footage all angles/3.mp4")
-    ap.add_argument("--out", type=str,
-                    default="D:/Shuttle Detection Model/outputs/video_inference_csv/3.csv")
-    ap.add_argument("--device", type=str, default="cuda")
-    ap.add_argument("--mode", type=str, choices=["calib", "fast", "smart"], default="smart")
+    ap = argparse.ArgumentParser(
+        description="Label every frame of a video with shuttle head predictions."
+    )
+
+    ap.add_argument(
+        "--video",
+        type=str,
+        default="E:/AI/Badminton Landing Project/Playing footage all angles/5.mp4",
+        help="Path to the input video file to be processed."
+    )
+
+    ap.add_argument(
+        "--csv",
+        type=str,
+        default="D:/Shuttle Detection Model/outputs/video_inference_csv/5_csv_smart.csv",
+        help="Path to the output CSV file where predictions will be saved."
+    )
+
+    ap.add_argument(
+        "--device",
+        type=str,
+        default="cuda",
+        help="Device to run inference on (e.g. 'cuda' for GPU or 'cpu' for CPU)."
+    )
+
+    ap.add_argument(
+        "--mode",
+        type=str,
+        choices=["calib", "fast", "smart"],
+        default="smart",
+        help=(
+            "Inference mode:\n"
+            "  'calib' - calibration mode, usually slower but useful for debugging;\n"
+            "  'fast'  - prioritize speed over accuracy;\n"
+            "  'smart' - balanced mode (recommended)."
+        )
+    )
+
     args = ap.parse_args()
 
-    main(args.video, args.out, device=args.device, mode=args.mode)
+    main(args.video, args.csv, device=args.device, mode=args.mode)
