@@ -665,8 +665,7 @@ I picked the B3 version for both as it strikes a good balance between input reso
 224×224. This defines the precise crop size taken from the original frame, centered around the Stage 1 estimate.
 B0 was chosen for its very low FLOPs. However, the small crop size means 
 the tolerance for stage-1 error is limited; only ±112 pixels in each direction.</p>
-<p><strong>Heatmap paradigm:</strong> In later versions of both stages (see <a href="../model_development_log_mkdocs/">Model Development Log</a>), all models use heatmap-based 
-localization.</p>
+<p><strong>Heatmap paradigm:</strong> In later versions of both stages, all models use heatmap-based localization, which is explained below.</p>
 <figure>
 <p><img alt="Figure 3: Demonstration of the heatmap approach" src="../Figures/heatmap_paradigm.png" width="80%" />
   </p>
@@ -784,7 +783,7 @@ before triggering a calibration step.</p>
 every 8 frames. Without this safeguard, the system 
 would re-check every subsequent frame after the 8th invisible prediction, leading to redundant calibration attempts.</p>
 <hr />
-<p><strong>Problem 2: false positives from background artifacts</strong></p>
+<p><strong>Pathology 2: false positives from background artifacts</strong></p>
 <p>Due to poor visibility prediction, it is frequently the case in both calibration and fast 
 modes that we get a sequence of “visible shuttle head” predictions in the background or over players’ shirts. 
 In egregious cases, the false positive predictions flit across the screen at a speed impossible for real shuttle heads.</p>
@@ -825,7 +824,7 @@ we trigger a calibration step.</p>
 </code></pre></div>
 </details>
 <hr />
-<p><strong>Problem 3: frequent calibration triggers indicate model uncertainty</strong></p>
+<p><strong>Pathology 3: frequent calibration triggers indicate model uncertainty</strong></p>
 <p>So far, if we detect unstable behavior during a fast step, we 
 would replace the fast step prediction with one from calibration step. However, calibration step is not error-proof 
 and during inference, we have no way of knowing if the prediction returned from the calibration step is correct.</p>
