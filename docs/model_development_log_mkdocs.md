@@ -105,10 +105,14 @@ rough prediction within 0.06 normalized units away from the ground truth.
 
 ### Stage-2 v4 + v5
 
-**Model summary**
+**Model summary: FPN -> heatmap**
 
-This is the first model that uses the heatmap approach for prediction. Versions 4 and 5 in the [Stage-2 version table](#stage-2-version-table-optional-reading) offer a satisfactory 
-summary of the model; for a deeper dive, I would recommend reading [stage2_model_v4.py](https://github.com/BillTheTsar/Shuttle-Detection/blob/main/scripts/stage2_v4/stage2_model_v4.py). I think there is more
+<figure markdown>
+  ![Figure 6: Stage-2 v4 + v5 model diagram](Figures/stage2_v4_diagram.jpg){ width="80%" }
+  <figcaption>Figure 6: Stage-2 v4 + v5 model diagram</figcaption>
+</figure>
+
+This is the first model that uses the heatmap approach for prediction. Figure 6 summarizes the model; for a deeper dive, I would recommend reading [stage2_model_v4.py](https://github.com/BillTheTsar/Shuttle-Detection/blob/main/scripts/stage2_v4/stage2_model_v4.py). I think there is more
 nuance in exploring how the validation losses dropped in version 5 with a one-liner change.
 
 **How did the validation losses drop?**
@@ -117,16 +121,8 @@ For a whole week, the validation losses across four different stage-2 versions c
 training losses reliably hit 0.012. This led to much frustration, from which I conducted
 debugs on the dataset, dataloader, models and even training procedures; to no avail.
 
-As last resort, I ran a series 
-of tests to see the impacts of different combinations of data augmentation techniques on the losses incurred. 
-Figure 6 shows the raw results obtained.
-
-<figure markdown>
-  ![Figure 6: Impact of augmentation techniques on validation losses](Figures/raw_test_data.jpeg){ width="80%" }
-  <figcaption>Figure 6: Impact of augmentation techniques on validation losses</figcaption>
-</figure>
-
-We collate this data into the following table:
+As last resort, I ran 6 tests to see the impacts of different combinations of data augmentation techniques on the 
+losses incurred. The data is presented in the following table:
 
 | Test no. | Data split | Color jitter applied | Gaussian noise | Horizontal flip applied | Average loss |
 |----------|------------|-----------------------|----------------|-------------------------|--------------|
@@ -158,7 +154,7 @@ def apply_noise(frames, noise_std=0.01):
     return noisy_frames
 ```
 
-We employ an analogy to explain why training with a constant `noise_std` and then performing inference without it 
+We use an analogy to explain why training with a constant `noise_std` and then performing inference without it 
 (data augmentation is not used in inference) is problematic. 
 
 Imagine the model as a racehorse and the training images as its racetrack. During training, every track the horse runs 
