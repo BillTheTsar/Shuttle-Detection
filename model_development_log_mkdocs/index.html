@@ -607,23 +607,20 @@ it.</p>
 rough prediction within 0.06 normalized units away from the ground truth.</p>
 <hr />
 <h3 id="stage-2-v4-v5">Stage-2 v4 + v5<a class="headerlink" href="#stage-2-v4-v5" title="Permanent link">&para;</a></h3>
-<p><strong>Model summary</strong></p>
-<p>This is the first model that uses the heatmap approach for prediction. Versions 4 and 5 in the <a href="#stage-2-version-table-optional-reading">Stage-2 version table</a> offer a satisfactory 
-summary of the model; for a deeper dive, I would recommend reading <a href="https://github.com/BillTheTsar/Shuttle-Detection/blob/main/scripts/stage2_v4/stage2_model_v4.py">stage2_model_v4.py</a>. I think there is more
+<p><strong>Model summary: FPN -&gt; heatmap</strong></p>
+<figure>
+<p><img alt="Figure 6: Stage-2 v4 + v5 model diagram" src="../Figures/stage2_v4_diagram.jpg" width="80%" />
+  </p>
+<figcaption>Figure 6: Stage-2 v4 + v5 model diagram</figcaption>
+</figure>
+<p>This is the first model that uses the heatmap approach for prediction. Figure 6 summarizes the model; for a deeper dive, I would recommend reading <a href="https://github.com/BillTheTsar/Shuttle-Detection/blob/main/scripts/stage2_v4/stage2_model_v4.py">stage2_model_v4.py</a>. I think there is more
 nuance in exploring how the validation losses dropped in version 5 with a one-liner change.</p>
 <p><strong>How did the validation losses drop?</strong></p>
 <p>For a whole week, the validation losses across four different stage-2 versions could not drop below 0.10 while the 
 training losses reliably hit 0.012. This led to much frustration, from which I conducted
 debugs on the dataset, dataloader, models and even training procedures; to no avail.</p>
-<p>As last resort, I ran a series 
-of tests to see the impacts of different combinations of data augmentation techniques on the losses incurred. 
-Figure 6 shows the raw results obtained.</p>
-<figure>
-<p><img alt="Figure 6: Impact of augmentation techniques on validation losses" src="../Figures/raw_test_data.jpeg" width="80%" />
-  </p>
-<figcaption>Figure 6: Impact of augmentation techniques on validation losses</figcaption>
-</figure>
-<p>We collate this data into the following table:</p>
+<p>As last resort, I ran 6 tests to see the impacts of different combinations of data augmentation techniques on the 
+losses incurred. The data is presented in the following table:</p>
 <table>
 <thead>
 <tr>
@@ -704,7 +701,7 @@ we would apply Gaussian noise to a crop or frame the following way:</p>
         <span class="n">noisy_frames</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">img_tensor</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">noisy_frames</span>
 </code></pre></div>
-<p>We employ an analogy to explain why training with a constant <code>noise_std</code> and then performing inference without it 
+<p>We use an analogy to explain why training with a constant <code>noise_std</code> and then performing inference without it 
 (data augmentation is not used in inference) is problematic. </p>
 <p>Imagine the model as a racehorse and the training images as its racetrack. During training, every track the horse runs 
 on is covered with rainwater; sometimes shallow, sometimes deeper, but averaging 0.01 meters in depth. Over hundreds of 
