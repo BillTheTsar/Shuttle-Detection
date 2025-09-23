@@ -1,7 +1,5 @@
 # Badminton Shuttle Head Tracking from Video
 
----
-
 An independent computer vision project culminating in a system capable of tracking a badminton shuttle from match footage. 
 With TensorRT, the system achieves real-time speeds of 86 FPS.
 
@@ -13,8 +11,6 @@ snippets labeled by the system.
 >
 >In the [Project Report](https://billthetsar.github.io/Shuttle-Detection/), we explain the objectives, challenges 
 overcome and insights gained from multiple model redesigns. It covers everything below and much more!
-
----
 
 ## Key Achievements
 
