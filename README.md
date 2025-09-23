@@ -1,4 +1,4 @@
-<p style="font-size: 2.0em; font-weight: bold; margin-bottom: 0;">Badminton Shuttle Head Tracking from Video</p>
+# Badminton Shuttle Head Tracking from Video
 
 ---
 
@@ -57,6 +57,9 @@ Now we've installed the necessary packages, we can label our videos with shuttle
 2. To get the csv, run 
 `python scripts/video_inferencer.py --video_path path/to/input.mp4 --csv_path path/to/output.csv`.
 
+3. To annotate the video with the csv labels, run `python scripts/video_labeler.py 
+--video path/to/input.mp4 --csv path/to/output.csv --out path/to/annotated.mp4`.
+
 <details>
 <summary>video_inferencer.py --help</summary>
 
@@ -78,9 +81,6 @@ options:
 By default, device="cuda" and mode="smart".
 
 </details>
-
-3. To annotate the video with the csv labels, run `python scripts/video_labeler.py 
---video path/to/input.mp4 --csv path/to/output.csv --out path/to/annotated.mp4`.
 
 <details>
 <summary>video_labeler.py --help</summary>
