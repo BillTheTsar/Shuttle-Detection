@@ -184,8 +184,7 @@ I picked the B3 version for both as it strikes a good balance between input reso
 B0 was chosen for its very low FLOPs. However, the small crop size means 
 the tolerance for stage-1 error is limited; only ±112 pixels in each direction.
 
-**Heatmap paradigm:** In later versions of both stages (see [Model Development Log](model_development_log_mkdocs.md)), all models use heatmap-based 
-localization.
+**Heatmap paradigm:** In later versions of both stages, all models use heatmap-based localization, which is explained below.
 
 <figure markdown>
   ![Figure 3: Demonstration of the heatmap approach](Figures/heatmap_paradigm.png){ width="80%" }
@@ -334,7 +333,7 @@ would re-check every subsequent frame after the 8th invisible prediction, leadin
 
 ---
 
-**Problem 2: false positives from background artifacts**
+**Pathology 2: false positives from background artifacts**
 
 Due to poor visibility prediction, it is frequently the case in both calibration and fast 
 modes that we get a sequence of “visible shuttle head” predictions in the background or over players’ shirts. 
@@ -382,7 +381,7 @@ we trigger a calibration step.
 
 ---
 
-**Problem 3: frequent calibration triggers indicate model uncertainty**
+**Pathology 3: frequent calibration triggers indicate model uncertainty**
 
 So far, if we detect unstable behavior during a fast step, we 
 would replace the fast step prediction with one from calibration step. However, calibration step is not error-proof 
